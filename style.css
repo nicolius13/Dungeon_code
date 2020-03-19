@@ -7,13 +7,14 @@ body {
 }
 
 .floor {
-  background-image: url(./Assets/img/Map//Floors/floor_1.png);
+  background: url(./Assets/img/Map//Floors/floor_1.png);
   background-repeat: no-repeat;
   background-size: cover;
   height: 70px;
   width: 70px;
   display: flex;
   justify-content: center;
+  position: relative;
 }
 
 .wall {
@@ -129,4 +130,15 @@ body {
   100% {
     background-position: -136px;
   }
+}
+
+.movement::after {
+  content: '';
+  background: rgba(0, 0, 0, 0.3);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
 }

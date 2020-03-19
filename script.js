@@ -1,5 +1,5 @@
 //  /////////////////////////
-//          OBJECTS
+//     OBJECTS AND ARRAYS
 //  /////////////////////////
 
 // MAP
@@ -108,7 +108,7 @@ function renderTile() {
     $('#app').append('<div class="mapRow"></div>');
     for (let j = 0; j < map[i].length; j++) {
       const loc = map[i][j];
-      $('.mapRow:last').append(`<div class="${loc.tileType}"></div>`);
+      $('.mapRow:last').append(`<div class=" tile ${loc.tileType}"></div>`);
       if (loc.tileType === 'floor') {
         $('.floor:last').css('backgroundImage', `url(${floorStyling()})`);
       }
@@ -135,22 +135,22 @@ function generateMap(x, y) {
       // create the border
       if (i === 0) {
         if (j === 0) {
-          pushTile(i, 'sideTopLeft');
+          pushTile(i, 'wall sideTopLeft');
         } else if (j === y + 1) {
-          pushTile(i, 'sideTopRight');
+          pushTile(i, 'wall sideTopRight');
         } else {
-          pushTile(i, 'topBotLimit');
+          pushTile(i, 'wall topBotLimit');
         }
       } else if (i === x + 1) {
         if (j === 0) {
-          pushTile(i, 'sideBottomLeft');
+          pushTile(i, 'wall sideBottomLeft');
         } else if (j === y + 1) {
-          pushTile(i, 'sideBottomRight');
+          pushTile(i, 'wall sideBottomRight');
         } else {
-          pushTile(i, 'topBotLimit');
+          pushTile(i, 'wall topBotLimit');
         }
       } else if (j === 0 || j === y + 1) {
-        pushTile(i, 'sideLimit');
+        pushTile(i, 'wall sideLimit');
 
         // choose the tile type (wall or floor) if it's not a border
       } else {
@@ -176,11 +176,69 @@ function generateMap(x, y) {
 //         MOVEMENT
 //  /////////////////////////
 
+function verticalMove(element, player) {
+  let move = $();
+  element.each((_i, el) => {
+    move = move.add($(el).children(`:nth-child(${player.position[1] + 1})`));
+  });
+  return move;
+}
+
+function moveHighlight(element) {
+  element.each((_i, el) => {
+    // check if there is a wall
+    if ($(el).hasClass('wall')) {
+      return false;
+    }
+    // check if ther is the other players
+    if (
+      $(el)
+        .children()
+        .hasClass('player2') ||
+      $(el)
+        .children()
+        .hasClass('player1')
+    ) {
+      return false;
+    }
+    $(el).addClass('movement');
+  });
+}
+
+function displayMove(player) {
+  const playerTile = $(`.tile:has(.${player.name})`);
+  // vertical moves
+  const topRow = playerTile.parent().prevAll(':lt(3)');
+  // reverse the jquery object because the result of .add() return in doc order
+  let movTop = $(
+    verticalMove(topRow, player)
+      .get()
+      .reverse()
+  );
+
+  const bottomRow = playerTile.parent().nextAll(':lt(3)');
+  const movBottom = verticalMove(bottomRow, player);
+
+  // horizontal moves
+  const movRight = playerTile.nextAll(':lt(3)');
+  const movLeft = playerTile.prevAll(':lt(3)');
+
+  moveHighlight(movTop);
+  moveHighlight(movBottom);
+  moveHighlight(movRight);
+  moveHighlight(movLeft);
+}
+
 //  /////////////////////////
-//         GAME START
+//            GAME
 //  /////////////////////////
 
 $(() => {
+  // Map
   generateMap(10, 10);
   console.log(map);
+
+  // Start
+  displayMove(player1);
+  // displayMove(player2);
 });
