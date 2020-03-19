@@ -1,0 +1,132 @@
+body {
+  height: 100vh;
+}
+
+.mapRow {
+  display: flex;
+}
+
+.floor {
+  background-image: url(./Assets/img/Map//Floors/floor_1.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 70px;
+  width: 70px;
+  display: flex;
+  justify-content: center;
+}
+
+.wall {
+  background-image: url(./Assets/img/Map/wall_mid.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 70px;
+  width: 70px;
+}
+.sideLimit {
+  background-image: url(./Assets/img/Map/wall_sides.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 70px;
+  width: 22px;
+}
+
+.topBotLimit {
+  background-image: url(./Assets/img/Map/wall_bottom_mid.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 74px;
+  width: 70px;
+}
+
+.sideTopLeft {
+  background-image: url(./Assets/img/Map/wall_side_top_left.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 74px;
+  width: 22px;
+}
+.sideTopRight {
+  background-image: url(./Assets/img/Map/wall_side_top_right.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 74px;
+  width: 22px;
+}
+.sideBottomLeft {
+  background-image: url(./Assets/img/Map/wall_side_bottom_left.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 74px;
+  width: 22px;
+}
+.sideBottomRight {
+  background-image: url(./Assets/img/Map/wall_side_bottom_right.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 74px;
+  width: 22px;
+}
+
+.objects {
+  height: 60px;
+  width: 34px;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.player1 {
+  background-image: url(./Assets/img/Players/knight_idle-sprit.png);
+}
+.player2 {
+  background-image: url(./Assets/img/Players/mage_idle-sprit.png);
+}
+.player1,
+.player2 {
+  background-size: cover;
+  -webkit-animation: play 0.8s steps(4) infinite;
+  -moz-animation: play 0.8s steps(4) infinite;
+  -ms-animation: play 0.8s steps(4) infinite;
+  -o-animation: play 0.8s steps(4) infinite;
+  animation: play 0.8s steps(4) infinite;
+}
+@-webkit-keyframes play {
+  0% {
+    background-position: 0px;
+  }
+  100% {
+    background-position: -136px;
+  }
+}
+@-moz-keyframes play {
+  0% {
+    background-position: 0px;
+  }
+  100% {
+    background-position: -136px;
+  }
+}
+@-ms-keyframes play {
+  0% {
+    background-position: 0px;
+  }
+  100% {
+    background-position: -136px;
+  }
+}
+@-o-keyframes play {
+  0% {
+    background-position: 0px;
+  }
+  100% {
+    background-position: -136px;
+  }
+}
+@keyframes play {
+  0% {
+    background-position: 0px;
+  }
+  100% {
+    background-position: -136px;
+  }
+}
