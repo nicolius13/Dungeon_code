@@ -105,10 +105,10 @@ function floorStyling() {
 // render tiles and objects
 function renderTile() {
   for (let i = 0; i < map.length; i++) {
-    $('#app').append('<div class="mapRow"></div>');
+    $('#app').append(`<div class="mapRow" x=${i}></div>`);
     for (let j = 0; j < map[i].length; j++) {
       const loc = map[i][j];
-      $('.mapRow:last').append(`<div class=" tile ${loc.tileType}"></div>`);
+      $('.mapRow:last').append(`<div class=" tile ${loc.tileType}" y=${j}></div>`);
       if (loc.tileType === 'floor') {
         $('.floor:last').css('backgroundImage', `url(${floorStyling()})`);
       }
@@ -176,21 +176,30 @@ function generateMap(x, y) {
 //         MOVEMENT
 //  /////////////////////////
 
+// select vertical move
 function verticalMove(element, player) {
   let move = $();
+  // select the column of the player by looking at the 'y' attribute
+  const col = parseInt(
+    $(`.${player.name}`)
+      .parent()
+      .attr('y')
+  );
+  // add the tile of the column 'col' to 'move' and return move
   element.each((_i, el) => {
-    move = move.add($(el).children(`:nth-child(${player.position[1] + 1})`));
+    move = move.add($(el).children(`:nth-child(${col + 1})`));
   });
+
   return move;
 }
-
+// highlight possible move tile expect if there is wall or player in the way
 function moveHighlight(element) {
   element.each((_i, el) => {
-    // check if there is a wall
+    // check if there is a wall if true => break the loop
     if ($(el).hasClass('wall')) {
       return false;
     }
-    // check if ther is the other players
+    // check if the other player is in the way if true => break the loop
     if (
       $(el)
         .children()
@@ -201,6 +210,7 @@ function moveHighlight(element) {
     ) {
       return false;
     }
+
     $(el).addClass('movement');
   });
 }
@@ -208,14 +218,16 @@ function moveHighlight(element) {
 function displayMove(player) {
   const playerTile = $(`.tile:has(.${player.name})`);
   // vertical moves
+  // move up
   const topRow = playerTile.parent().prevAll(':lt(3)');
+
   // reverse the jquery object because the result of .add() return in doc order
   let movTop = $(
     verticalMove(topRow, player)
       .get()
       .reverse()
   );
-
+  // move down
   const bottomRow = playerTile.parent().nextAll(':lt(3)');
   const movBottom = verticalMove(bottomRow, player);
 
@@ -223,6 +235,7 @@ function displayMove(player) {
   const movRight = playerTile.nextAll(':lt(3)');
   const movLeft = playerTile.prevAll(':lt(3)');
 
+  // highlight possible movement
   moveHighlight(movTop);
   moveHighlight(movBottom);
   moveHighlight(movRight);
@@ -233,12 +246,45 @@ function displayMove(player) {
 //            GAME
 //  /////////////////////////
 
+function changeTurn(player) {
+  // change the turn of player to false
+  player1.turn = !player1.turn;
+  player2.turn = !player2.turn;
+  if (player === player1) {
+    move(player2);
+  } else if (player === player2) {
+    move(player1);
+  }
+}
+
+function move(player) {
+  // display movement for player1
+  displayMove(player);
+  //add click event listener on every movement tile
+  $('.movement').click(el => {
+    console.log(el);
+
+    // if a tile is clicked
+    // remove player from his tile
+    $(`.${player.name}`).remove();
+    // move player to the clicked tile
+    $(el.target).append(`<div class="${player.name} objects"></div>`);
+    // change the turn of player to false
+    // remove the click event and the 'movement' class
+    $('.movement')
+      .off()
+      .removeClass('movement');
+    changeTurn(player);
+  });
+}
+
 $(() => {
   // Map
   generateMap(10, 10);
+
   console.log(map);
 
   // Start
-  displayMove(player1);
-  // displayMove(player2);
+
+  move(player1);
 });
