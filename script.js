@@ -279,15 +279,15 @@ function move(target, player) {
 //  /////////////////////////
 
 function moveWeapon(player, weapon) {
-  // remove de div of the weapon
-  $(`.${weapon.name}`).remove();
-  // replace it where the player is
-  $(`.${player.name}`)
-    .parent()
-    .append(`<div class="${weapon.name} objects"></div>`);
-  $(`.${weapon.name}`).css('backgroundImage', `url(./Assets/img/Weapons/${weapon.name}.png)`);
-  // update position of the weapon
   if (weapon.name !== 'fist') {
+    // remove de div of the weapon
+    $(`.${weapon.name}`).remove();
+    // replace it where the player is
+    $(`.${player.name}`)
+      .parent()
+      .append(`<div class="${weapon.name} objects"></div>`);
+    $(`.${weapon.name}`).css('backgroundImage', `url(./Assets/img/Weapons/${weapon.name}.png)`);
+    // update position of the weapon
     console.log($(`.${player.name}`).parent()[0]);
 
     updatePosition(weapon, $(`.${player.name}`));
