@@ -287,10 +287,9 @@ function moveWeapon(player, weapon) {
       .parent()
       .append(`<div class="${weapon.name} objects"></div>`);
     $(`.${weapon.name}`).css('backgroundImage', `url(./Assets/img/Weapons/${weapon.name}.png)`);
-    // update position of the weapon
-    console.log($(`.${player.name}`).parent()[0]);
 
-    updatePosition(weapon, $(`.${player.name}`));
+    // update position of the weapon
+    updatePosition(weapon, $(`.${player.name}`).parent()[0]);
   }
 }
 
@@ -325,8 +324,6 @@ function checkWeapons(player) {
 //  /////////////////////////
 
 function updatePosition(obj, target) {
-  console.log(obj);
-
   const positionX = parseInt(
     $(target)
       .parent()
@@ -335,7 +332,6 @@ function updatePosition(obj, target) {
   obj.position[0] = positionX;
   const positionY = parseInt($(target).attr('y'));
   obj.position[1] = positionY;
-  console.log(obj.position);
 }
 
 function changeTurn(player) {
