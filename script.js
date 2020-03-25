@@ -7,20 +7,18 @@ let map = [];
 
 // WEAPONS
 // to add weapon : key must be the same as the 'name' value and the name of the '.png'
-const weapons = [
-  { name: 'sword', damage: 25, position: [], img: './Assets/img/Weapons/sword.png' },
-  { name: 'hammer', damage: 12, position: [], img: './Assets/img/Weapons/hammer.png' },
-  { name: 'axe', damage: 20, position: [], img: './Assets/img/Weapons/axe.png' },
-  { name: 'spear', damage: 15, position: [], img: './Assets/img/Weapons/spear.png' },
-];
+const weapons = {
+  fist: { name: 'fist', damage: 10 },
+  sword: { name: 'sword', damage: 25, position: [], img: './Assets/img/Weapons/sword.png' },
+  hammer: { name: 'hammer', damage: 12, position: [], img: './Assets/img/Weapons/hammer.png' },
+  axe: { name: 'axe', damage: 20, position: [], img: './Assets/img/Weapons/axe.png' },
+  spear: { name: 'spear', damage: 15, position: [], img: './Assets/img/Weapons/spear.png' },
+};
 // PLAYERS
 let player1 = {
   name: 'player1',
   life: 100,
-  weapon: {
-    name: 'fist',
-    damage: 10,
-  },
+  weapon: { name: 'fist', damage: 10 },
   position: [],
   turn: true,
   img: './Assets/img/Players/knight_idle-sprit.png',
@@ -28,10 +26,7 @@ let player1 = {
 let player2 = {
   name: 'player2',
   life: 100,
-  weapon: {
-    name: 'fist',
-    damage: 10,
-  },
+  weapon: { name: 'fist', damage: 10 },
   position: [],
   turn: false,
   img: './Assets/img/Players/mage_idle-sprit.png',
@@ -118,7 +113,7 @@ function renderTile() {
         if (obj === 'player1' || obj === 'player2') {
           $('.floor:last').append(`<div class="${obj} objects"></div>`);
         } else {
-          $('.floor:last').append(`<div class="objects"></div>`);
+          $('.floor:last').append(`<div class="${obj} objects"></div>`);
           $('.objects:last').css('backgroundImage', `url(./Assets/img/Weapons/${obj}.png)`);
         }
       }
@@ -160,9 +155,12 @@ function generateMap(x, y) {
   }
   // WEAPONS
   // create an array of the keys of the weapons obj to loop through
-  weapons.forEach(weapon => {
+  const weaponsArray = Object.keys(weapons);
+  weaponsArray.forEach(weapon => {
     // choose position of weapon and put it in the weapons obj
-    placeObj(weapon, 'weapons', x, y);
+    if (weapon !== 'fist') {
+      placeObj(weapons[weapon], 'weapons', x, y);
+    }
   });
   // PLAYERS
   // place 'player1'
@@ -184,6 +182,10 @@ function generateMap(x, y) {
   // render the map
   renderTile();
 }
+
+//  /////////////////////////
+//            GAME
+//  /////////////////////////
 
 //  /////////////////////////
 //         MOVEMENT
@@ -255,64 +257,108 @@ function displayMove(player) {
   moveHighlight(movLeft);
 }
 
+function move(target, player) {
+  // if a tile is clicked
+  // remove player from his tile
+  $(`.${player.name}`).remove();
+  // move player to the clicked tile
+  $(target).append(`<div class="${player.name} objects"></div>`);
+
+  // update the position in the 'player' object
+  updatePosition(player, target);
+
+  // change the turn of player to false
+  // remove the click event and the 'movement' class
+  $('.movement')
+    .off()
+    .removeClass('movement');
+}
+
 //  /////////////////////////
-//            GAME
+//            WEAPONS
 //  /////////////////////////
+
+function moveWeapon(player, weapon) {
+  // remove de div of the weapon
+  $(`.${weapon.name}`).remove();
+  // replace it where the player is
+  $(`.${player.name}`)
+    .parent()
+    .append(`<div class="${weapon.name} objects"></div>`);
+  $(`.${weapon.name}`).css('backgroundImage', `url(./Assets/img/Weapons/${weapon.name}.png)`);
+  // update position of the weapon
+  if (weapon.name !== 'fist') {
+    console.log($(`.${player.name}`).parent()[0]);
+
+    updatePosition(weapon, $(`.${player.name}`));
+  }
+}
+
+function checkWeapons(player) {
+  const posX = player.position[0];
+  const posY = player.position[1];
+  // check if the player is on a tile with a weapon
+  let newWeapon;
+  //  create a array of the values of the 'weapons' object
+  const weaponsArray = Object.values(weapons);
+  weaponsArray.forEach(weapon => {
+    if (weapon.name !== 'fist') {
+      if (posX === weapon.position[0] && posY === weapon.position[1]) {
+        // add the weapon to the 'player'
+        player.weapon.name = weapon.name;
+        player.weapon.damage = weapon.damage;
+        newWeapon = weapon;
+      }
+    }
+  });
+  // if there is a new weapon move it with the player
+  if (newWeapon) {
+    moveWeapon(player, newWeapon);
+  } else {
+    // if not move the weapon the player has
+    moveWeapon(player, weapons[player.weapon.name]);
+  }
+}
+
+//  /////////////////////////
+//        GENERAL/TURNS
+//  /////////////////////////
+
+function updatePosition(obj, target) {
+  console.log(obj);
+
+  const positionX = parseInt(
+    $(target)
+      .parent()
+      .attr('x')
+  );
+  obj.position[0] = positionX;
+  const positionY = parseInt($(target).attr('y'));
+  obj.position[1] = positionY;
+  console.log(obj.position);
+}
 
 function changeTurn(player) {
   // change the turn of player to false
   player1.turn = !player1.turn;
   player2.turn = !player2.turn;
   if (player === player1) {
-    move(player2);
+    play(player2);
   } else if (player === player2) {
-    move(player1);
+    play(player1);
   }
-}
-
-function updatePosition(player, target, attr) {
-  let position;
-  if (attr === 'x') {
-    position = parseInt(
-      $(target)
-        .parent()
-        .attr(`${attr}`)
-    );
-    player.position[0] = position;
-  } else if (attr === 'y') {
-    position = parseInt($(target).attr(`${attr}`));
-    player.position[1] = position;
-  }
-}
-
-function move(player) {
-  // display movement for player1
-  displayMove(player);
-
-  //add click event listener on every movement tile
-  $('.movement').click(el => {
-    // if a tile is clicked
-    // remove player from his tile
-    $(`.${player.name}`).remove();
-    // move player to the clicked tile
-    $(el.target).append(`<div class="${player.name} objects"></div>`);
-
-    // update the X position in the 'player' object
-    updatePosition(player, el.target, 'x');
-    // update the Y position in the 'player' object
-    updatePosition(player, el.target, 'y');
-
-    // change the turn of player to false
-    // remove the click event and the 'movement' class
-    $('.movement')
-      .off()
-      .removeClass('movement');
-    changeTurn(player);
-  });
 }
 
 function play(player) {
-  move(player);
+  // display movement for player
+  displayMove(player);
+  //add click event listener on every movement tile
+  $('.movement').click(el => {
+    move(el.target, player);
+    checkWeapons(player);
+
+    changeTurn(player);
+  });
 }
 
 $(() => {
