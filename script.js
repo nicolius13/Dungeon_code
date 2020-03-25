@@ -8,10 +8,10 @@ let map = [];
 // WEAPONS
 // to add weapon : key must be the same as the 'name' value and the name of the '.png'
 const weapons = [
-  { name: 'sword', position: [], img: './Assets/img/Weapons/sword.png' },
-  { name: 'hammer', position: [], img: './Assets/img/Weapons/hammer.png' },
-  { name: 'axe', position: [], img: './Assets/img/Weapons/axe.png' },
-  { name: 'spear', position: [], img: './Assets/img/Weapons/spear.png' },
+  { name: 'sword', damage: 25, position: [], img: './Assets/img/Weapons/sword.png' },
+  { name: 'hammer', damage: 12, position: [], img: './Assets/img/Weapons/hammer.png' },
+  { name: 'axe', damage: 20, position: [], img: './Assets/img/Weapons/axe.png' },
+  { name: 'spear', damage: 15, position: [], img: './Assets/img/Weapons/spear.png' },
 ];
 // PLAYERS
 let player1 = {
