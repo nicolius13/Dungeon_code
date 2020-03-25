@@ -165,8 +165,21 @@ function generateMap(x, y) {
     placeObj(weapon, 'weapons', x, y);
   });
   // PLAYERS
+  // place 'player1'
   placeObj(player1, 'player1', x, y);
-  placeObj(player2, 'player2', x, y);
+  const pos1 = player1.position;
+  // place 'player2' and check if it's not adjacent from 'player1', if true replace it
+  let pos2, isAdjacent;
+  do {
+    placeObj(player2, 'player2', x, y);
+    pos2 = player2.position;
+    isAdjacent =
+      pos1[0] === pos2[0] + 1 || pos1[0] === pos2[0] - 1 || pos1[1] === pos2[1] + 1 || pos1[1] === pos2[1] - 1;
+
+    if (isAdjacent) {
+      delete map[pos2[0]][pos2[1]].obj;
+    }
+  } while (isAdjacent);
 
   // render the map
   renderTile();
@@ -257,18 +270,38 @@ function changeTurn(player) {
   }
 }
 
+function updatePosition(player, target, attr) {
+  let position;
+  if (attr === 'x') {
+    position = parseInt(
+      $(target)
+        .parent()
+        .attr(`${attr}`)
+    );
+    player.position[0] = position;
+  } else if (attr === 'y') {
+    position = parseInt($(target).attr(`${attr}`));
+    player.position[1] = position;
+  }
+}
+
 function move(player) {
   // display movement for player1
   displayMove(player);
+
   //add click event listener on every movement tile
   $('.movement').click(el => {
-    console.log(el);
-
     // if a tile is clicked
     // remove player from his tile
     $(`.${player.name}`).remove();
     // move player to the clicked tile
     $(el.target).append(`<div class="${player.name} objects"></div>`);
+
+    // update the X position in the 'player' object
+    updatePosition(player, el.target, 'x');
+    // update the Y position in the 'player' object
+    updatePosition(player, el.target, 'y');
+
     // change the turn of player to false
     // remove the click event and the 'movement' class
     $('.movement')
@@ -276,6 +309,10 @@ function move(player) {
       .removeClass('movement');
     changeTurn(player);
   });
+}
+
+function play(player) {
+  move(player);
 }
 
 $(() => {
@@ -286,5 +323,5 @@ $(() => {
 
   // Start
 
-  move(player1);
+  play(player1);
 });
