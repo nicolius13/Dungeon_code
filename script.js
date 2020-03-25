@@ -303,16 +303,20 @@ function checkWeapons(player) {
   weaponsArray.forEach(weapon => {
     if (weapon.name !== 'fist') {
       if (posX === weapon.position[0] && posY === weapon.position[1]) {
-        // add the weapon to the 'player'
-        player.weapon.name = weapon.name;
-        player.weapon.damage = weapon.damage;
         newWeapon = weapon;
       }
     }
   });
   // if there is a new weapon move it with the player
   if (newWeapon) {
+    // place the new weapon in front of the player
     moveWeapon(player, newWeapon);
+    // move the old weapon
+    moveWeapon(player, weapons[player.weapon.name]);
+
+    // add the new weapon to the 'player'
+    player.weapon.name = newWeapon.name;
+    player.weapon.damage = newWeapon.damage;
   } else {
     // if not move the weapon the player has
     moveWeapon(player, weapons[player.weapon.name]);
