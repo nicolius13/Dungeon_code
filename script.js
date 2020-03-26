@@ -327,19 +327,9 @@ function attack(attacker, defender) {
   console.log(`${defender.name} life : ${defender.life}`);
 }
 
-function checkWin(player) {
-  const life = player.life;
-  if (life === 0) {
-    console.log(`${player.name} is dead`);
-    return false;
-  } else {
-    return true;
-  }
-}
-
 function Combat(player) {
   if (checkIfAdjacent()) {
-    console.log('Combat');
+    console.log('Combat !');
     let firstPlayer, secondPlayer;
     if (player === player1) {
       firstPlayer = player1;
@@ -352,20 +342,37 @@ function Combat(player) {
     let hasWin = false;
     do {
       if (turns % 2 !== 0) {
+        console.log(`Turn : ${turns}`);
+
         attack(firstPlayer, secondPlayer);
         hasWin = checkWin(secondPlayer);
+        if (hasWin) {
+          console.log(`${secondPlayer.name} is dead`);
+        }
       } else {
         attack(secondPlayer, firstPlayer);
         hasWin = checkWin(firstPlayer);
+        if (hasWin) {
+          console.log(`${firstPlayer.name} is dead`);
+        }
       }
       turns += 1;
-    } while (hasWin);
+    } while (!hasWin);
   }
 }
 
 //  /////////////////////////
 //          GENERAL
 //  /////////////////////////
+
+function checkWin(player) {
+  const life = player.life;
+  if (life <= 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 function checkIfAdjacent() {
   const pos1 = player1.position;
@@ -411,8 +418,14 @@ function play(player) {
   $('.movement').click(el => {
     movePlayer(el.target, player);
     checkWeapons(player);
+    // check if combat and do it if player is adjacent
     Combat(player);
-    changeTurn(player);
+    // stop the game if a player had win
+    if (checkWin(player1) || checkWin(player2)) {
+      return;
+    } else {
+      changeTurn(player);
+    }
   });
 }
 
