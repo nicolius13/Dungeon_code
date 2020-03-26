@@ -10,9 +10,9 @@ let map = [];
 const weapons = {
   fist: { name: 'fist', damage: 10 },
   sword: { name: 'sword', damage: 25, position: [], img: './Assets/img/Weapons/sword.png' },
-  hammer: { name: 'hammer', damage: 12, position: [], img: './Assets/img/Weapons/hammer.png' },
+  hammer: { name: 'hammer', damage: 15, position: [], img: './Assets/img/Weapons/hammer.png' },
   axe: { name: 'axe', damage: 20, position: [], img: './Assets/img/Weapons/axe.png' },
-  spear: { name: 'spear', damage: 15, position: [], img: './Assets/img/Weapons/spear.png' },
+  club: { name: 'club', damage: 12, position: [], img: './Assets/img/Weapons/club.png' },
 };
 // PLAYERS
 let player1 = {
@@ -111,10 +111,10 @@ function renderTile() {
       if ('obj' in loc) {
         const obj = loc.obj;
         if (obj === 'player1' || obj === 'player2') {
-          $('.floor:last').append(`<div class="${obj} objects"></div>`);
+          $('.floor:last').append(`<div class="${obj} player"></div>`);
         } else {
-          $('.floor:last').append(`<div class="${obj} objects"></div>`);
-          $('.objects:last').css('backgroundImage', `url(./Assets/img/Weapons/${obj}.png)`);
+          $('.floor:last').append(`<div class="${obj} weapons"></div>`);
+          $('.weapons:last').css('backgroundImage', `url(./Assets/img/Weapons/${obj}.png)`);
         }
       }
     }
@@ -262,7 +262,7 @@ function move(target, player) {
   // remove player from his tile
   $(`.${player.name}`).remove();
   // move player to the clicked tile
-  $(target).append(`<div class="${player.name} objects"></div>`);
+  $(target).append(`<div class="${player.name} player"></div>`);
 
   // update the position in the 'player' object
   updatePosition(player, target);
@@ -285,7 +285,7 @@ function moveWeapon(player, weapon) {
     // replace it where the player is
     $(`.${player.name}`)
       .parent()
-      .append(`<div class="${weapon.name} objects"></div>`);
+      .append(`<div class="${weapon.name} weapons"></div>`);
     $(`.${weapon.name}`).css('backgroundImage', `url(./Assets/img/Weapons/${weapon.name}.png)`);
 
     // update position of the weapon
