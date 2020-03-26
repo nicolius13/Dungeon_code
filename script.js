@@ -165,19 +165,13 @@ function generateMap(x, y) {
   // PLAYERS
   // place 'player1'
   placeObj(player1, 'player1', x, y);
-  const pos1 = player1.position;
   // place 'player2' and check if it's not adjacent from 'player1', if true replace it
-  let pos2, isAdjacent;
   do {
     placeObj(player2, 'player2', x, y);
-    pos2 = player2.position;
-    isAdjacent =
-      pos1[0] === pos2[0] + 1 || pos1[0] === pos2[0] - 1 || pos1[1] === pos2[1] + 1 || pos1[1] === pos2[1] - 1;
-
-    if (isAdjacent) {
-      delete map[pos2[0]][pos2[1]].obj;
+    if (checkIfAdjacent()) {
+      delete map[player2.position[0]][player2.position[1]].obj;
     }
-  } while (isAdjacent);
+  } while (checkIfAdjacent());
 
   // render the map
   renderTile();
@@ -257,7 +251,7 @@ function displayMove(player) {
   moveHighlight(movLeft);
 }
 
-function move(target, player) {
+function movePlayer(target, player) {
   // if a tile is clicked
   // remove player from his tile
   $(`.${player.name}`).remove();
@@ -311,21 +305,82 @@ function checkWeapons(player) {
   if (newWeapon) {
     // place the new weapon in front of the player
     moveWeapon(player, newWeapon);
-    // move the old weapon
+    // place the old weapon in the same tile as the player
     moveWeapon(player, weapons[player.weapon.name]);
 
     // add the new weapon to the 'player'
     player.weapon.name = newWeapon.name;
     player.weapon.damage = newWeapon.damage;
   } else {
-    // if not move the weapon the player has
+    // if there is no new weapon : move the weapon the player has with him
     moveWeapon(player, weapons[player.weapon.name]);
   }
 }
 
 //  /////////////////////////
-//        GENERAL/TURNS
+//          COMBAT
 //  /////////////////////////
+
+function attack(attacker, defender) {
+  defender.life = defender.life - attacker.weapon.damage;
+  console.log(`${attacker.name} attack ${defender.name} for ${attacker.weapon.damage}`);
+  console.log(`${defender.name} life : ${defender.life}`);
+}
+
+function checkWin(player) {
+  const life = player.life;
+  if (life === 0) {
+    console.log(`${player.name} is dead`);
+    return false;
+  } else {
+    return true;
+  }
+}
+
+function Combat(player) {
+  if (checkIfAdjacent()) {
+    console.log('Combat');
+    let firstPlayer, secondPlayer;
+    if (player === player1) {
+      firstPlayer = player1;
+      secondPlayer = player2;
+    } else {
+      firstPlayer = player2;
+      secondPlayer = player1;
+    }
+    let turns = 1;
+    let hasWin = false;
+    do {
+      if (turns % 2 !== 0) {
+        attack(firstPlayer, secondPlayer);
+        hasWin = checkWin(secondPlayer);
+      } else {
+        attack(secondPlayer, firstPlayer);
+        hasWin = checkWin(firstPlayer);
+      }
+      turns += 1;
+    } while (hasWin);
+  }
+}
+
+//  /////////////////////////
+//          GENERAL
+//  /////////////////////////
+
+function checkIfAdjacent() {
+  const pos1 = player1.position;
+  const pos2 = player2.position;
+  const isAdjacent =
+    (pos1[0] === pos2[0] + 1 && pos1[1] === pos2[1]) ||
+    (pos1[0] === pos2[0] - 1 && pos1[1] === pos2[1]) ||
+    (pos1[0] === pos2[0] && pos1[1] === pos2[1] + 1) ||
+    (pos1[0] === pos2[0] && pos1[1] === pos2[1] - 1);
+  if (isAdjacent) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 function updatePosition(obj, target) {
   const positionX = parseInt(
@@ -354,9 +409,9 @@ function play(player) {
   displayMove(player);
   //add click event listener on every movement tile
   $('.movement').click(el => {
-    move(el.target, player);
+    movePlayer(el.target, player);
     checkWeapons(player);
-
+    Combat(player);
     changeTurn(player);
   });
 }
