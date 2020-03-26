@@ -172,7 +172,10 @@ function generateMap(x, y) {
     placeObj(player2, 'player2', x, y);
     pos2 = player2.position;
     isAdjacent =
-      pos1[0] === pos2[0] + 1 || pos1[0] === pos2[0] - 1 || pos1[1] === pos2[1] + 1 || pos1[1] === pos2[1] - 1;
+      (pos1[0] === pos2[0] + 1 && pos1[1] === pos2[1]) ||
+      (pos1[0] === pos2[0] - 1 && pos1[1] === pos2[1]) ||
+      (pos1[0] === pos2[0] && pos1[1] === pos2[1] + 1) ||
+      (pos1[0] === pos2[0] && pos1[1] === pos2[1] - 1);
 
     if (isAdjacent) {
       delete map[pos2[0]][pos2[1]].obj;
