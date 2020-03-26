@@ -17,6 +17,7 @@ const weapons = {
 // PLAYERS
 let player1 = {
   name: 'player1',
+  coolName: 'Knight',
   life: 100,
   weapon: { name: 'fist', damage: 10 },
   position: [],
@@ -25,6 +26,7 @@ let player1 = {
 };
 let player2 = {
   name: 'player2',
+  coolName: 'Mage',
   life: 100,
   weapon: { name: 'fist', damage: 10 },
   position: [],
@@ -100,7 +102,7 @@ function floorStyling() {
 // render tiles and objects
 function renderTile() {
   for (let i = 0; i < map.length; i++) {
-    $('#app').append(`<div class="mapRow" x=${i}></div>`);
+    $('#board').append(`<div class="mapRow" x=${i}></div>`);
     for (let j = 0; j < map[i].length; j++) {
       const loc = map[i][j];
       $('.mapRow:last').append(`<div class=" tile ${loc.tileType}" y=${j}></div>`);
@@ -175,6 +177,13 @@ function generateMap(x, y) {
 
   // render the map
   renderTile();
+
+  // put the life of the players in their respective char sheet
+  updateUILife(player1);
+  updateUILife(player2);
+  // put the weapon and damage of the players in their respective char sheet
+  updateUIWeapon(player1);
+  updateUIWeapon(player2);
 }
 
 //  /////////////////////////
@@ -311,6 +320,8 @@ function checkWeapons(player) {
     // add the new weapon to the 'player'
     player.weapon.name = newWeapon.name;
     player.weapon.damage = newWeapon.damage;
+    // update UI
+    updateUIWeapon(player);
   } else {
     // if there is no new weapon : move the weapon the player has with him
     moveWeapon(player, weapons[player.weapon.name]);
@@ -322,14 +333,22 @@ function checkWeapons(player) {
 //  /////////////////////////
 
 function attack(attacker, defender) {
+  // substract the attacker's damage of the defendre's life
   defender.life = defender.life - attacker.weapon.damage;
-  console.log(`${attacker.name} attack ${defender.name} for ${attacker.weapon.damage}`);
-  console.log(`${defender.name} life : ${defender.life}`);
+
+  console.log(`${attacker.coolName} attack ${defender.coolName} for ${attacker.weapon.damage} damage`);
+  $('#menu ul').prepend(
+    `<li class="">${attacker.coolName} attack ${defender.coolName} for ${attacker.weapon.damage} damage</li>`
+  );
+
+  console.log(`${defender.coolName} life : ${defender.life}`);
+  updateUILife(defender);
 }
 
 function Combat(player) {
   if (checkIfAdjacent()) {
     console.log('Combat !');
+    // select the first player to play
     let firstPlayer, secondPlayer;
     if (player === player1) {
       firstPlayer = player1;
@@ -340,20 +359,21 @@ function Combat(player) {
     }
     let turns = 1;
     let hasWin = false;
-    do {
-      if (turns % 2 !== 0) {
-        console.log(`Turn : ${turns}`);
 
+    do {
+      $('#menu ul').prepend(`<li class="">Turn : ${turns}</li>`);
+      console.log(`Turn : ${turns}`);
+      if (turns % 2 !== 0) {
         attack(firstPlayer, secondPlayer);
-        hasWin = checkWin(secondPlayer);
+        hasWin = checkDead(secondPlayer);
         if (hasWin) {
-          console.log(`${secondPlayer.name} is dead`);
+          console.log(`${secondPlayer.coolName} is dead`);
         }
       } else {
         attack(secondPlayer, firstPlayer);
-        hasWin = checkWin(firstPlayer);
+        hasWin = checkDead(firstPlayer);
         if (hasWin) {
-          console.log(`${firstPlayer.name} is dead`);
+          console.log(`${firstPlayer.coolName} is dead`);
         }
       }
       turns += 1;
@@ -365,7 +385,16 @@ function Combat(player) {
 //          GENERAL
 //  /////////////////////////
 
-function checkWin(player) {
+function updateUILife(player) {
+  $(`#${player.name}Life`).text(`${player.life}`);
+}
+
+function updateUIWeapon(player) {
+  $(`#${player.name}Weapon`).text(`${player.weapon.name}`);
+  $(`#${player.name}Damage`).text(`${player.weapon.damage}`);
+}
+
+function checkDead(player) {
   const life = player.life;
   if (life <= 0) {
     return true;
@@ -374,6 +403,13 @@ function checkWin(player) {
   }
 }
 
+function win(winner) {
+  $('#board')
+    .addClass('win')
+    .append(`<h1 class="gameOver">Game Over</h1> <h3 class="winner">${winner} won !</h3>`);
+}
+
+// check if playes are adjacent to each other
 function checkIfAdjacent() {
   const pos1 = player1.position;
   const pos2 = player2.position;
@@ -388,7 +424,7 @@ function checkIfAdjacent() {
     return false;
   }
 }
-
+// update the position of an object
 function updatePosition(obj, target) {
   const positionX = parseInt(
     $(target)
@@ -401,9 +437,10 @@ function updatePosition(obj, target) {
 }
 
 function changeTurn(player) {
-  // change the turn of player to false
+  // change the 'turn' of players
   player1.turn = !player1.turn;
   player2.turn = !player2.turn;
+  // restart a turn with the next player
   if (player === player1) {
     play(player2);
   } else if (player === player2) {
@@ -421,7 +458,11 @@ function play(player) {
     // check if combat and do it if player is adjacent
     Combat(player);
     // stop the game if a player had win
-    if (checkWin(player1) || checkWin(player2)) {
+    if (checkDead(player2)) {
+      win(player1.coolName);
+      return;
+    } else if (checkDead(player1)) {
+      win(player2.coolName);
       return;
     } else {
       changeTurn(player);

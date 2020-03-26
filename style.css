@@ -1,6 +1,206 @@
-body {
+/*  FONTS */
+
+@font-face {
+  font-family: gameOver;
+  src: url(./Assets/fonts/LVDCGO__.TTF);
 }
+
+/* APP */
+
 #app {
+  display: flex;
+  justify-content: center;
+}
+#board {
+  position: relative;
+}
+
+/* MENU */
+
+#menu {
+  margin: 20px;
+  font-family: gameOver, cursive;
+}
+
+#menu h2 {
+  text-align: center;
+  font-size: 14px;
+}
+#menu p {
+  font-size: 10px;
+}
+/* Charsheet */
+.character h3 {
+  margin: -1.5rem auto 1rem;
+  display: table;
+  padding: 0.5rem 0.5rem;
+}
+
+#charSheet {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+.character {
+  display: inline-block;
+  position: relative;
+  border-color: #000;
+  border-style: solid;
+  border-width: 6px;
+  margin: 15px;
+  padding: 10px 20px;
+  max-width: 500px;
+  min-width: 160px;
+}
+/* .character:before,
+.character:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  box-sizing: content-box;
+}
+.character:before {
+  top: -6px;
+  left: 0;
+  border-top: 6px black solid;
+  border-bottom: 6px black solid;
+}
+.character:after {
+  left: -6px;
+  top: 0;
+  border-left: 6px black solid;
+  border-right: 6px black solid;
+} */
+
+.mage,
+.character.mage h3 {
+  background-color: rgb(43, 159, 226);
+}
+.knight,
+.character.knight h3 {
+  background-color: rgb(231, 53, 53);
+}
+/* Buttons */
+#menuBtn {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+#menu a {
+  margin: 15px;
+  width: 140px;
+}
+.btn {
+  display: inline-block;
+  position: relative;
+  text-align: center;
+  padding: 15px;
+  text-decoration: none;
+}
+
+.btn:before,
+.btn:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  box-sizing: content-box;
+}
+.btn:before {
+  top: -6px;
+  left: 0;
+  border-top: 6px black solid;
+  border-bottom: 6px black solid;
+}
+.btn:after {
+  left: -6px;
+  top: 0;
+  border-left: 6px black solid;
+  border-right: 6px black solid;
+}
+/* Attack Btn */
+#attackBtn {
+  background: #e76e55;
+  box-shadow: inset -4px -4px 0px 0px #8c2022;
+}
+#attackBtn:hover,
+#attackBtn:focus {
+  background: #ce372b;
+  box-shadow: inset -6px -6px 0px 0px #8c2022;
+}
+#attackBtn:active {
+  box-shadow: inset 4px 4px 0px 0px #8c2022;
+}
+/* Defend Btn */
+#defendBtn {
+  background: #92cd41;
+  box-shadow: inset -4px -4px 0px 0px #4aa52e;
+}
+#defendBtn:hover,
+#defendBtn:focus {
+  background: #76c442;
+  box-shadow: inset -6px -6px 0px 0px #4aa52e;
+}
+#defendBtn:active {
+  box-shadow: inset 4px 4px 0px 0px #4aa52e;
+}
+
+/* CombatLog */
+.combatLog {
+  overflow: auto;
+  height: 250px;
+  color: #000;
+  font-size: 12px;
+}
+.combatLog ul {
+  list-style: none;
+  padding: 0;
+}
+
+.combatLog li {
+  padding: 1em;
+}
+.combatLog li:nth-child(odd) {
+  background-color: rgb(43, 159, 226);
+}
+
+/* END GAME */
+
+.win::after {
+  content: '';
+  background: rgba(0, 0, 0, 0.4);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+.gameOver {
+  color: rgb(255, 0, 0);
+  font-family: gameOver, monospace;
+  font-size: 40px;
+  width: 600px;
+  text-align: center;
+  position: absolute;
+  top: 40%;
+  left: Calc(50% - 300px);
+}
+
+.winner {
+  color: rgb(255, 0, 0);
+  font-family: gameOver, monospace;
+  font-size: 19px;
+  width: 400px;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: Calc(50% - 200px);
 }
 
 /* MAP */
