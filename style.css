@@ -1,6 +1,9 @@
 body {
-  height: 100vh;
 }
+#app {
+}
+
+/* MAP */
 
 .mapRow {
   display: flex;
@@ -69,12 +72,15 @@ body {
   width: 22px;
 }
 
+/* WEAPONS */
+
 .weapons {
-  /* height: 46px; */
   width: 15px;
   background-repeat: no-repeat;
   background-size: contain;
 }
+
+/* PLAYERS */
 
 .player {
   height: 46px;
@@ -137,6 +143,8 @@ body {
     background-position: -134px;
   }
 }
+
+/* MOVEMENT */
 
 .movement::after {
   content: '';
