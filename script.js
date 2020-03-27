@@ -20,8 +20,9 @@ let player1 = {
   coolName: 'Knight',
   life: 100,
   weapon: { name: 'fist', damage: 10 },
-  position: [],
+  defending: false,
   turn: true,
+  position: [],
   img: './Assets/img/Players/knight_idle-sprit.png',
 };
 let player2 = {
@@ -29,8 +30,9 @@ let player2 = {
   coolName: 'Mage',
   life: 100,
   weapon: { name: 'fist', damage: 10 },
-  position: [],
+  defending: false,
   turn: false,
+  position: [],
   img: './Assets/img/Players/mage_idle-sprit.png',
 };
 
@@ -335,8 +337,20 @@ function checkWeapons(player) {
 //          COMBAT
 //  /////////////////////////
 
+// add the turn number and who's turn it is
+function turnLog(player, turn) {
+  $('#menu ul').prepend(`<li class="${player.name}Turn">${player.coolName}'s turn</li>`);
+  $('#menu ul').prepend(`<li class="">Turn : ${turn}</li>`);
+}
+
 function attack(attacker, defender) {
-  const damage = attacker.weapon.damage;
+  let damage;
+  // check if the defender defenses himself if true divides by 2 the damage
+  if (defender.defending) {
+    damage = attacker.weapon.damage / 2;
+  } else {
+    damage = attacker.weapon.damage;
+  }
   // substract the attacker's damage of the defendre's life
   defender.life = defender.life - damage;
   // update the life of the defender
@@ -347,18 +361,25 @@ function attack(attacker, defender) {
 function attackTurn(attacker, defender, turn) {
   // attack and save the damage
   const damage = attack(attacker, defender);
+  // reset the defence of the defender
+  defender.defending = false;
   // put the attack in the combat log
   $('#menu ul').prepend(
-    `<li class="${attacker.name}Turn">${attacker.coolName} attack ${defender.coolName} for ${damage} damage</li>`
+    `<li class="${attacker.name}Turn">${attacker.coolName} attacks ${defender.coolName} for ${damage} damages</li>`
   );
-  $('#menu ul').prepend(`<li class="${attacker.name}Turn">${attacker.coolName}'s turn</li>`);
-  $('#menu ul').prepend(`<li class="">Turn : ${turn}</li>`);
+  turnLog(attacker, turn);
 
   if (checkDead(defender)) {
     console.log(`${attacker.coolName} is dead`);
     // stop the game if a player had win
     win(attacker.coolName);
   }
+}
+
+function defend(player, turn) {
+  player.defending = true;
+  $('#menu ul').prepend(`<li class="${player.name}Turn">${player.coolName} chooses to defend himself</li>`);
+  turnLog(player, turn);
 }
 
 function Combat(player) {
@@ -374,23 +395,27 @@ function Combat(player) {
     secondPlayer = player1;
   }
   let turns = 1;
-  let defend = false;
   // make the attack/defend buttons usable
   $('#menu .btn').removeClass('disabled');
   // attack btn
   $('#attackBtn').click(() => {
     if (turns % 2 !== 0) {
       attackTurn(firstPlayer, secondPlayer, turns);
+      changeCursor(secondPlayer);
     } else {
       attackTurn(secondPlayer, firstPlayer, turns);
+      changeCursor(firstPlayer);
     }
     turns += 1;
   });
   // defend btn
   $('#defendBtn').click(() => {
-    console.log(`Turn : ${turns}`);
     if (turns % 2 !== 0) {
+      defend(firstPlayer, turns);
+      changeCursor(secondPlayer);
     } else {
+      defend(secondPlayer, turns);
+      changeCursor(firstPlayer);
     }
     turns += 1;
   });
