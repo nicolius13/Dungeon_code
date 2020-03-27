@@ -182,10 +182,10 @@ body {
 }
 
 /*  /////////////////////// 
-          END GAME
+        ANNOUNCEMENT
     ////////////////////// */
 
-.win::after {
+.overlay::after {
   content: '';
   background: rgba(0, 0, 0, 0.4);
   position: absolute;
@@ -201,6 +201,23 @@ body {
   font-family: gameOver, monospace;
   text-align: center;
   position: absolute;
+  z-index: 99;
+}
+
+.player1Announce {
+  color: rgb(231, 53, 53);
+  font-size: 40px;
+  width: 600px;
+  top: 40%;
+  left: Calc(50% - 300px);
+}
+
+.player2Announce {
+  color: rgb(43, 159, 226);
+  font-size: 40px;
+  width: 600px;
+  top: 40%;
+  left: Calc(50% - 300px);
 }
 
 .gameOver {

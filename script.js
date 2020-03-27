@@ -376,7 +376,9 @@ function attackTurn(attacker, defender, turn) {
   if (checkDead(defender)) {
     console.log(`${attacker.coolName} is dead`);
     // stop the game
-    win(attacker.coolName);
+    return win(attacker.coolName);
+  } else {
+    showTurn('turn', defender);
   }
 }
 
@@ -390,46 +392,49 @@ function defend(player, turn) {
 
 function Combat(player) {
   console.log('Combat !');
+  // Announce Combat
+  showTurn('combat');
+  setTimeout(() => {
+    showTurn('turn', player);
 
-  // select the first player to play
-  let firstPlayer, secondPlayer;
-  if (player === player1) {
-    firstPlayer = player1;
-    secondPlayer = player2;
-  } else {
-    firstPlayer = player2;
-    secondPlayer = player1;
-  }
-  let turns = 1;
-  // make the attack/defend buttons usable
-  $('#menu .btn').removeClass('disabled');
-  // attack btn
-  $('#attackBtn').click(() => {
-    // check if turn is odd, if odd the firstPlayer play else the second one
-    if (turns % 2 !== 0) {
-      attackTurn(firstPlayer, secondPlayer, turns);
-      changeCursor(secondPlayer);
-      showTurn(secondPlayer);
+    // select the first player to play
+    let firstPlayer, secondPlayer;
+    if (player === player1) {
+      firstPlayer = player1;
+      secondPlayer = player2;
     } else {
-      attackTurn(secondPlayer, firstPlayer, turns);
-      changeCursor(firstPlayer);
-      showTurn(firstPlayer);
+      firstPlayer = player2;
+      secondPlayer = player1;
     }
-    turns += 1;
-  });
-  // defend btn
-  $('#defendBtn').click(() => {
-    if (turns % 2 !== 0) {
-      defend(firstPlayer, turns);
-      changeCursor(secondPlayer);
-      showTurn(secondPlayer);
-    } else {
-      defend(secondPlayer, turns);
-      changeCursor(firstPlayer);
-      showTurn(firstPlayer);
-    }
-    turns += 1;
-  });
+    let turns = 1;
+    // make the attack/defend buttons usable
+    $('#menu .btn').removeClass('disabled');
+    // attack btn
+    $('#attackBtn').click(() => {
+      // check if turn is odd, if odd the firstPlayer play else the second one
+      if (turns % 2 !== 0) {
+        attackTurn(firstPlayer, secondPlayer, turns);
+        changeCursor(secondPlayer);
+      } else {
+        attackTurn(secondPlayer, firstPlayer, turns);
+        changeCursor(firstPlayer);
+      }
+      turns += 1;
+    });
+    // defend btn
+    $('#defendBtn').click(() => {
+      if (turns % 2 !== 0) {
+        defend(firstPlayer, turns);
+        changeCursor(secondPlayer);
+        showTurn('turn', secondPlayer);
+      } else {
+        defend(secondPlayer, turns);
+        changeCursor(firstPlayer);
+        showTurn('turn', firstPlayer);
+      }
+      turns += 1;
+    });
+  }, messageDelay);
 }
 
 //  /////////////////////////
@@ -463,9 +468,10 @@ function win(winner) {
   removeMoveHighlight();
   // show the game over message
   $('#board')
-    .addClass('win')
+    .addClass('overlay')
     .append(`<h1 class="overlayText gameOver">Game Over</h1> <h3 class="overlayText winner">${winner} won !</h3>`);
   $('.overlayText').addClass('animated bounceIn');
+  return true;
 }
 
 // check if playes are adjacent to each other
@@ -511,24 +517,31 @@ function changeCursor(player) {
   $('body').css('cursor', `url(./Assets/img/Cursor/cursor_${player.name}.png), auto`);
 }
 
-function showTurn(player) {
+function showTurn(type, player) {
   // remove the overlayText if it exist
   $('.overlayText').remove();
   // show who's turn it is
-  $('#board')
-    .addClass('win')
-    .append(`<h1 class="overlayText gameOver">${player.coolName}'turn</h1>`);
+  $('#board').addClass('overlay');
+  if (type === 'turn') {
+    $('#board').append(`<h1 class="overlayText ${player.name}Announce">${player.coolName}'turn</h1>`);
+  } else if (type === 'combat') {
+    $('#board').append(`<h1 class="overlayText gameOver">Combat !</h1>`);
+  }
+
   $('.overlayText').addClass('animated bounceIn');
   setTimeout(() => {
     // remove the text after 1s
-    $('#board').removeClass('win');
+    $('#board').removeClass('overlay');
     $('.overlayText').addClass('animated zoomOut');
   }, messageDelay);
 }
 
 function play(player) {
-  showTurn(player);
+  showTurn('turn', player);
   setTimeout(() => {
+    setTimeout(() => {
+      $('.overlayText').remove();
+    }, 500);
     // change the cursor acording to the player that play
     changeCursor(player);
     // display movement for player
