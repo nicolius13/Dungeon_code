@@ -174,8 +174,11 @@ body {
 .combatLog li {
   padding: 1em;
 }
-.combatLog li:nth-child(odd) {
+.combatLog li.player2Turn {
   background-color: rgb(43, 159, 226);
+}
+.combatLog li.player1Turn {
+  background-color: rgb(231, 53, 53);
 }
 
 /*  /////////////////////// 

@@ -336,57 +336,64 @@ function checkWeapons(player) {
 //  /////////////////////////
 
 function attack(attacker, defender) {
+  const damage = attacker.weapon.damage;
   // substract the attacker's damage of the defendre's life
-  defender.life = defender.life - attacker.weapon.damage;
-
-  console.log(`${attacker.coolName} attack ${defender.coolName} for ${attacker.weapon.damage} damage`);
-  $('#menu ul').prepend(
-    `<li class="">${attacker.coolName} attack ${defender.coolName} for ${attacker.weapon.damage} damage</li>`
-  );
-
-  console.log(`${defender.coolName} life : ${defender.life}`);
+  defender.life = defender.life - damage;
+  // update the life of the defender
   updateUILife(defender);
+  return damage;
+}
+
+function attackTurn(attacker, defender, turn) {
+  // attack and save the damage
+  const damage = attack(attacker, defender);
+  // put the attack in the combat log
+  $('#menu ul').prepend(
+    `<li class="${attacker.name}Turn">${attacker.coolName} attack ${defender.coolName} for ${damage} damage</li>`
+  );
+  $('#menu ul').prepend(`<li class="${attacker.name}Turn">${attacker.coolName}'s turn</li>`);
+  $('#menu ul').prepend(`<li class="">Turn : ${turn}</li>`);
+
+  if (checkDead(defender)) {
+    console.log(`${attacker.coolName} is dead`);
+    // stop the game if a player had win
+    win(attacker.coolName);
+  }
 }
 
 function Combat(player) {
-  if (checkIfAdjacent()) {
-    console.log('Combat !');
+  console.log('Combat !');
 
-    // select the first player to play
-    let firstPlayer, secondPlayer;
-    if (player === player1) {
-      firstPlayer = player1;
-      secondPlayer = player2;
-    } else {
-      firstPlayer = player2;
-      secondPlayer = player1;
-    }
-    let turns = 1;
-    let hasWin = false;
-    // make the attack/defend buttons usable
-    $('#menu .btn').removeClass('disabled');
-    $('#attackBtn').click(() => {
-      console.log(`Turn : ${turns}`);
-      if (turns % 2 !== 0) {
-        attack(firstPlayer, secondPlayer);
-        if (checkDead(secondPlayer)) {
-          console.log(`${secondPlayer.coolName} is dead`);
-          // stop the game if a player had win
-          win(secondPlayer.coolName);
-          return;
-        }
-      } else {
-        attack(secondPlayer, firstPlayer);
-        if (checkDead(firstPlayer)) {
-          console.log(`${firstPlayer.coolName} is dead`);
-          // stop the game if a player had win
-          win(firstPlayer.coolName);
-          return;
-        }
-      }
-      turns += 1;
-    });
+  // select the first player to play
+  let firstPlayer, secondPlayer;
+  if (player === player1) {
+    firstPlayer = player1;
+    secondPlayer = player2;
+  } else {
+    firstPlayer = player2;
+    secondPlayer = player1;
   }
+  let turns = 1;
+  let defend = false;
+  // make the attack/defend buttons usable
+  $('#menu .btn').removeClass('disabled');
+  // attack btn
+  $('#attackBtn').click(() => {
+    if (turns % 2 !== 0) {
+      attackTurn(firstPlayer, secondPlayer, turns);
+    } else {
+      attackTurn(secondPlayer, firstPlayer, turns);
+    }
+    turns += 1;
+  });
+  // defend btn
+  $('#defendBtn').click(() => {
+    console.log(`Turn : ${turns}`);
+    if (turns % 2 !== 0) {
+    } else {
+    }
+    turns += 1;
+  });
 }
 
 //  /////////////////////////
@@ -462,9 +469,13 @@ function changeTurn(player) {
   }
 }
 
+function changeCursor(player) {
+  $('body').css('cursor', `url(./Assets/img/Cursor/cursor_${player.name}.png), auto`);
+}
+
 function play(player) {
   // change the cursor acording to the player that play
-  $('body').css('cursor', `url(./Assets/img/Cursor/cursor_${player.name}.png), auto`);
+  changeCursor(player);
   // display movement for player
   displayMove(player);
   //add click event listener on every movement tile
@@ -473,8 +484,11 @@ function play(player) {
     checkWeapons(player);
 
     // check if combat and do it if player is adjacent
-    Combat(player);
-    changeTurn(player);
+    if (checkIfAdjacent()) {
+      Combat(player);
+    } else {
+      changeTurn(player);
+    }
   });
 }
 
