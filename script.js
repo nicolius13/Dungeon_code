@@ -449,6 +449,8 @@ function changeTurn(player) {
 }
 
 function play(player) {
+  // change the cursor acording to the player that play
+  $('body').css('cursor', `url(./Assets/img/Cursor/cursor_${player.name}.png), auto`);
   // display movement for player
   displayMove(player);
   //add click event listener on every movement tile
