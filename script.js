@@ -260,6 +260,12 @@ function displayMove(player) {
   moveHighlight(movLeft);
 }
 
+function removeMoveHighlight() {
+  $('.movement')
+    .off()
+    .removeClass('movement');
+}
+
 function movePlayer(target, player) {
   // if a tile is clicked
   // remove player from his tile
@@ -270,11 +276,8 @@ function movePlayer(target, player) {
   // update the position in the 'player' object
   updatePosition(player, target);
 
-  // change the turn of player to false
   // remove the click event and the 'movement' class
-  $('.movement')
-    .off()
-    .removeClass('movement');
+  removeMoveHighlight();
 }
 
 //  /////////////////////////
@@ -348,6 +351,7 @@ function attack(attacker, defender) {
 function Combat(player) {
   if (checkIfAdjacent()) {
     console.log('Combat !');
+
     // select the first player to play
     let firstPlayer, secondPlayer;
     if (player === player1) {
@@ -359,25 +363,29 @@ function Combat(player) {
     }
     let turns = 1;
     let hasWin = false;
-
-    do {
-      $('#menu ul').prepend(`<li class="">Turn : ${turns}</li>`);
+    // make the attack/defend buttons usable
+    $('#menu .btn').removeClass('disabled');
+    $('#attackBtn').click(() => {
       console.log(`Turn : ${turns}`);
       if (turns % 2 !== 0) {
         attack(firstPlayer, secondPlayer);
-        hasWin = checkDead(secondPlayer);
-        if (hasWin) {
+        if (checkDead(secondPlayer)) {
           console.log(`${secondPlayer.coolName} is dead`);
+          // stop the game if a player had win
+          win(secondPlayer.coolName);
+          return;
         }
       } else {
         attack(secondPlayer, firstPlayer);
-        hasWin = checkDead(firstPlayer);
-        if (hasWin) {
+        if (checkDead(firstPlayer)) {
           console.log(`${firstPlayer.coolName} is dead`);
+          // stop the game if a player had win
+          win(firstPlayer.coolName);
+          return;
         }
       }
       turns += 1;
-    } while (!hasWin);
+    });
   }
 }
 
@@ -407,6 +415,12 @@ function win(winner) {
   $('#board')
     .addClass('win')
     .append(`<h1 class="gameOver">Game Over</h1> <h3 class="winner">${winner} won !</h3>`);
+  // disabled the attack/defend buttons and remove the click event
+  $('.btn')
+    .addClass('disabled')
+    .off();
+  // remove the click event and the 'movement' class
+  removeMoveHighlight();
 }
 
 // check if playes are adjacent to each other
@@ -457,18 +471,10 @@ function play(player) {
   $('.movement').click(el => {
     movePlayer(el.target, player);
     checkWeapons(player);
+
     // check if combat and do it if player is adjacent
     Combat(player);
-    // stop the game if a player had win
-    if (checkDead(player2)) {
-      win(player1.coolName);
-      return;
-    } else if (checkDead(player1)) {
-      win(player2.coolName);
-      return;
-    } else {
-      changeTurn(player);
-    }
+    changeTurn(player);
   });
 }
 

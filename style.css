@@ -11,9 +11,6 @@
 APP
 ////////////////////// */
 
-html {
-  /* cursor: url(./Assets/img/Cursor/cursor_player1.png), auto; */
-}
 body {
   background-color: rgb(66, 66, 66);
   color: rgb(255, 248, 192);
@@ -95,40 +92,46 @@ body {
   justify-content: center;
 }
 
-#menu a {
+#menu .btn {
   margin: 15px;
   width: 140px;
-}
-.btn {
   display: inline-block;
   position: relative;
   text-align: center;
   padding: 15px;
   text-decoration: none;
 }
+#menu .btn.disabled,
+#menu .btn.disabled:hover,
+#menu .btn.disabled:focus {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
-.btn:before,
-.btn:after {
+#menu .btn:before,
+#menu .btn:after {
   content: '';
   position: absolute;
   width: 100%;
   height: 100%;
   box-sizing: content-box;
 }
-.btn:before {
+#menu .btn:before {
   top: -6px;
   left: 0;
   border-top: 6px black solid;
   border-bottom: 6px black solid;
 }
-.btn:after {
+#menu .btn:after {
   left: -6px;
   top: 0;
   border-left: 6px black solid;
   border-right: 6px black solid;
 }
 /* Attack Btn */
-#attackBtn {
+#attackBtn,
+#attackBtn.disabled:hover,
+#attackBtn.disabled:focus {
   background: #e76e55;
   box-shadow: inset -4px -4px 0px 0px #8c2022;
 }
@@ -141,7 +144,9 @@ body {
   box-shadow: inset 4px 4px 0px 0px #8c2022;
 }
 /* Defend Btn */
-#defendBtn {
+#defendBtn,
+#defendBtn.disabled:hover,
+#defendBtn.disabled:focus {
   background: #92cd41;
   box-shadow: inset -4px -4px 0px 0px #4aa52e;
 }
