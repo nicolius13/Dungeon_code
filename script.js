@@ -2,6 +2,10 @@
 //     OBJECTS AND ARRAYS
 //  /////////////////////////
 
+// VARIABLES
+
+const messageDelay = 1000;
+
 // MAP
 let map = [];
 
@@ -368,16 +372,18 @@ function attackTurn(attacker, defender, turn) {
     `<li class="${attacker.name}Turn">${attacker.coolName} attacks ${defender.coolName} for ${damage} damages</li>`
   );
   turnLog(attacker, turn);
-
+  // check if the defender is dead
   if (checkDead(defender)) {
     console.log(`${attacker.coolName} is dead`);
-    // stop the game if a player had win
+    // stop the game
     win(attacker.coolName);
   }
 }
 
 function defend(player, turn) {
+  // change the defending status of the player
   player.defending = true;
+  // put the defence in the combat log
   $('#menu ul').prepend(`<li class="${player.name}Turn">${player.coolName} chooses to defend himself</li>`);
   turnLog(player, turn);
 }
@@ -399,12 +405,15 @@ function Combat(player) {
   $('#menu .btn').removeClass('disabled');
   // attack btn
   $('#attackBtn').click(() => {
+    // check if turn is odd, if odd the firstPlayer play else the second one
     if (turns % 2 !== 0) {
       attackTurn(firstPlayer, secondPlayer, turns);
       changeCursor(secondPlayer);
+      showTurn(secondPlayer);
     } else {
       attackTurn(secondPlayer, firstPlayer, turns);
       changeCursor(firstPlayer);
+      showTurn(firstPlayer);
     }
     turns += 1;
   });
@@ -413,9 +422,11 @@ function Combat(player) {
     if (turns % 2 !== 0) {
       defend(firstPlayer, turns);
       changeCursor(secondPlayer);
+      showTurn(firstPlayer);
     } else {
       defend(secondPlayer, turns);
       changeCursor(firstPlayer);
+      showTurn(secondPlayer);
     }
     turns += 1;
   });
@@ -444,15 +455,17 @@ function checkDead(player) {
 }
 
 function win(winner) {
-  $('#board')
-    .addClass('win')
-    .append(`<h1 class="gameOver">Game Over</h1> <h3 class="winner">${winner} won !</h3>`);
   // disabled the attack/defend buttons and remove the click event
   $('.btn')
     .addClass('disabled')
     .off();
   // remove the click event and the 'movement' class
   removeMoveHighlight();
+  // show the game over message
+  $('#board')
+    .addClass('win')
+    .append(`<h1 class="overlayText gameOver">Game Over</h1> <h3 class="overlayText winner">${winner} won !</h3>`);
+  $('.overlayText').addClass('animated bounceIn');
 }
 
 // check if playes are adjacent to each other
@@ -498,23 +511,41 @@ function changeCursor(player) {
   $('body').css('cursor', `url(./Assets/img/Cursor/cursor_${player.name}.png), auto`);
 }
 
-function play(player) {
-  // change the cursor acording to the player that play
-  changeCursor(player);
-  // display movement for player
-  displayMove(player);
-  //add click event listener on every movement tile
-  $('.movement').click(el => {
-    movePlayer(el.target, player);
-    checkWeapons(player);
+function showTurn(player) {
+  // remove the overlayText if it exist
+  $('.overlayText').remove();
+  // show who's turn it is
+  $('#board')
+    .addClass('win')
+    .append(`<h1 class="overlayText gameOver">${player.coolName}'turn</h1>`);
+  $('.overlayText').addClass('animated bounceIn');
+  setTimeout(() => {
+    // remove the text after 1s
+    $('#board').removeClass('win');
+    $('.overlayText').addClass('animated zoomOut');
+  }, messageDelay);
+}
 
-    // check if combat and do it if player is adjacent
-    if (checkIfAdjacent()) {
-      Combat(player);
-    } else {
-      changeTurn(player);
-    }
-  });
+function play(player) {
+  showTurn(player);
+  setTimeout(() => {
+    // change the cursor acording to the player that play
+    changeCursor(player);
+    // display movement for player
+    displayMove(player);
+    //add click event listener on every movement tile
+    $('.movement').click(el => {
+      movePlayer(el.target, player);
+      checkWeapons(player);
+
+      // check if combat and do it if player is adjacent
+      if (checkIfAdjacent()) {
+        Combat(player);
+      } else {
+        changeTurn(player);
+      }
+    });
+  }, messageDelay);
 }
 
 $(() => {

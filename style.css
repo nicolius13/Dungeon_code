@@ -196,24 +196,23 @@ body {
   z-index: 1;
 }
 
-.gameOver {
+.overlayText {
   color: rgb(255, 0, 0);
   font-family: gameOver, monospace;
-  font-size: 40px;
-  width: 600px;
   text-align: center;
   position: absolute;
+}
+
+.gameOver {
+  font-size: 40px;
+  width: 600px;
   top: 40%;
   left: Calc(50% - 300px);
 }
 
 .winner {
-  color: rgb(255, 0, 0);
-  font-family: gameOver, monospace;
   font-size: 19px;
   width: 400px;
-  text-align: center;
-  position: absolute;
   top: 50%;
   left: Calc(50% - 200px);
 }
