@@ -422,11 +422,11 @@ function Combat(player) {
     if (turns % 2 !== 0) {
       defend(firstPlayer, turns);
       changeCursor(secondPlayer);
-      showTurn(firstPlayer);
+      showTurn(secondPlayer);
     } else {
       defend(secondPlayer, turns);
       changeCursor(firstPlayer);
-      showTurn(secondPlayer);
+      showTurn(firstPlayer);
     }
     turns += 1;
   });
