@@ -12,7 +12,7 @@ let map = [];
 // WEAPONS
 // to add weapon : key must be the same as the 'name' value and the name of the '.png'
 const weapons = {
-  fist: { name: 'fist', damage: 10 },
+  fist: { name: 'fist', damage: 10, img: './Assets/img/Weapons/fist.png' },
   sword: { name: 'sword', damage: 25, position: [], img: './Assets/img/Weapons/sword.png' },
   hammer: { name: 'hammer', damage: 15, position: [], img: './Assets/img/Weapons/hammer.png' },
   axe: { name: 'axe', damage: 20, position: [], img: './Assets/img/Weapons/axe.png' },
@@ -288,16 +288,19 @@ function movePlayer(target, player) {
 //            WEAPONS
 //  /////////////////////////
 
+function addWeapon(player, weapon) {
+  $(`.${player.name}`)
+    .parent()
+    .append(`<div class="${weapon} weapons"></div>`);
+  $(`.${weapon}`).css('backgroundImage', `url(./Assets/img/Weapons/${weapon}.png)`);
+}
+
 function moveWeapon(player, weapon) {
   if (weapon.name !== 'fist') {
     // remove de div of the weapon
     $(`.${weapon.name}`).remove();
     // replace it where the player is
-    $(`.${player.name}`)
-      .parent()
-      .append(`<div class="${weapon.name} weapons"></div>`);
-    $(`.${weapon.name}`).css('backgroundImage', `url(./Assets/img/Weapons/${weapon.name}.png)`);
-
+    addWeapon(player, weapon.name);
     // update position of the weapon
     updatePosition(weapon, $(`.${player.name}`).parent()[0]);
   }
@@ -357,6 +360,7 @@ function attack(attacker, defender) {
   defender.life = defender.life - damage;
   // update the life of the defender
   updateUILife(defender);
+
   return damage;
 }
 // disabled combat button for the time of the message + exit animation
@@ -374,19 +378,31 @@ function attackTurn(attacker, defender, turn) {
   const damage = attack(attacker, defender);
   // reset the defence of the defender
   defender.defending = false;
-  // put the attack in the combat log
-  $('#menu ul').prepend(
-    `<li class="${attacker.name}Turn">${attacker.coolName} attacks ${defender.coolName} for ${damage} damages</li>`
-  );
-  turnLog(attacker, turn);
-  // check if the defender is dead
-  if (checkDead(defender)) {
-    console.log(`${attacker.coolName} is dead`);
-    // stop the game
-    return win(attacker.coolName);
+  // attack animation
+  const attackerWeapon = attacker.weapon.name;
+  if (attackerWeapon !== 'fist') {
+    $(`.${attackerWeapon}`).addClass('animWeapon');
   } else {
-    showTurn('turn', defender);
+    $(`.${attacker.name}`)
+      .siblings('.weapons')
+      .addClass('animFist');
   }
+  setTimeout(() => {
+    $(`.${attackerWeapon}`).removeClass('animWeapon animFist');
+    // put the attack in the combat log
+    $('#menu ul').prepend(
+      `<li class="${attacker.name}Turn">${attacker.coolName} attacks ${defender.coolName} for ${damage} damages</li>`
+    );
+    turnLog(attacker, turn);
+    // check if the defender is dead
+    if (checkDead(defender)) {
+      console.log(`${attacker.coolName} is dead`);
+      // stop the game
+      return win(attacker.coolName);
+    } else {
+      showTurn('turn', defender);
+    }
+  }, 300);
 }
 
 function defend(player, turn) {
@@ -405,6 +421,13 @@ function Combat(player) {
   setTimeout(() => {
     // show who's plaing the combat turn
     showTurn('turn', player);
+    // show fist for the player that have no weapon
+    if (player1.weapon.name === 'fist') {
+      addWeapon(player1, 'fist');
+    }
+    if (player2.weapon.name === 'fist') {
+      addWeapon(player2, 'fist');
+    }
 
     // select the first player to play
     let firstPlayer, secondPlayer;
