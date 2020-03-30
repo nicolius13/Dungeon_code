@@ -258,7 +258,7 @@ function displayMove(player) {
   const movRight = playerTile.nextAll(':lt(3)');
   const movLeft = playerTile.prevAll(':lt(3)');
 
-  // highlight possible movement
+  // highlight all the possible movements
   moveHighlight(movTop);
   moveHighlight(movBottom);
   moveHighlight(movRight);
@@ -421,7 +421,7 @@ function Combat(player) {
   setTimeout(() => {
     // show who's plaing the combat turn
     showTurn('turn', player);
-    // show fist for the player that have no weapon
+    // show fist for the players that have no weapon
     if (player1.weapon.name === 'fist') {
       addWeapon(player1, 'fist');
     }
