@@ -8,23 +8,59 @@
 }
 
 /*  /////////////////////// 
-APP
+            APP
 ////////////////////// */
 
 body {
+  margin: 0;
+  height: 100vh;
   background-color: rgb(66, 66, 66);
+  font-family: gameOver, cursive;
   color: rgb(255, 248, 192);
+  cursor: url(./Assets/img/Cursor/cursor_player1.png), auto;
 }
-#app {
+#app,
+#game {
   display: flex;
   justify-content: center;
+}
+#app {
+  height: 100%;
 }
 #board {
   position: relative;
 }
 
 /*  /////////////////////// 
-            MENU
+        MAIN MENU
+////////////////////// */
+
+.mainMenu {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 60px;
+  background-color: rgb(37, 37, 37);
+}
+.mainLinks {
+  font-size: 45px;
+  color: #8c2022;
+  transition: all 0.4s ease-in-out;
+}
+.mainLinks:hover {
+  transform: scale(1.2);
+  color: #68181a;
+  transition: all 0.4s ease-in-out;
+}
+
+#options h6 {
+  color: #8c2022;
+  font-size: 20px;
+}
+/*  /////////////////////// 
+        IN GAME MENU
     ////////////////////// */
 
 #menu {

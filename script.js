@@ -622,4 +622,37 @@ Vue.component('game', {
 
 new Vue({
   el: '#app',
+  data: {
+    start: false,
+    menu: true,
+    options: false,
+    mapX: 10,
+    mapY: 10,
+  },
+  methods: {
+    startGame() {
+      this.start = true;
+      this.menu = !this.menu;
+    },
+    toggleOptions() {
+      this.options = !this.options;
+      this.menu = !this.menu;
+    },
+    spinner(event) {
+      switch (event.target.attributes.data.nodeValue) {
+        case 'upX':
+          this.mapX++;
+          break;
+        case 'dwnX':
+          this.mapX--;
+          break;
+        case 'upY':
+          this.mapY++;
+          break;
+        case 'dwnY':
+          this.mapY--;
+          break;
+      }
+    },
+  },
 });
