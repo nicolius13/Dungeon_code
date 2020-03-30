@@ -47,7 +47,6 @@ let player2 = {
 function pushTile(index, className) {
   map[index].push({ tileType: className });
 }
-
 // chose if a tile is a wall or not
 function chooseTile() {
   const rdm = Math.floor(Math.random() * 100);
@@ -165,7 +164,7 @@ function generateMap(x, y) {
   // create an array of the keys of the weapons obj to loop through
   const weaponsArray = Object.keys(weapons);
   weaponsArray.forEach(weapon => {
-    // choose position of weapon and put it in the weapons obj
+    // choose position of weapon and put it in the weapons obj except 'fist'
     if (weapon !== 'fist') {
       placeObj(weapons[weapon], 'weapons', x, y);
     }
@@ -273,7 +272,6 @@ function removeMoveHighlight() {
 }
 
 function movePlayer(target, player) {
-  // if a tile is clicked
   // remove player from his tile
   $(`.${player.name}`).remove();
   // move player to the clicked tile
@@ -310,7 +308,7 @@ function checkWeapons(player) {
   const posY = player.position[1];
   // check if the player is on a tile with a weapon
   let newWeapon;
-  //  create a array of the values of the 'weapons' object
+  //  create a array of the values of the 'weapons' object to loop trough
   const weaponsArray = Object.values(weapons);
   weaponsArray.forEach(weapon => {
     if (weapon.name !== 'fist') {
@@ -326,13 +324,13 @@ function checkWeapons(player) {
     // place the old weapon in the same tile as the player
     moveWeapon(player, weapons[player.weapon.name]);
 
-    // add the new weapon to the 'player'
+    // add the new weapon to the 'player' object
     player.weapon.name = newWeapon.name;
     player.weapon.damage = newWeapon.damage;
     // update UI
     updateUIWeapon(player);
   } else {
-    // if there is no new weapon : move the weapon the player has with him
+    // if there is no new weapon : move weapon's player with him
     moveWeapon(player, weapons[player.weapon.name]);
   }
 }
@@ -360,6 +358,15 @@ function attack(attacker, defender) {
   // update the life of the defender
   updateUILife(defender);
   return damage;
+}
+// disabled combat button for the time of the message + exit animation
+function disabledCombatBtn() {
+  $('#attackBtn').prop('disabled', true);
+  $('#defendBtn').prop('disabled', true);
+  setTimeout(() => {
+    $('#attackBtn').prop('disabled', false);
+    $('#defendBtn').prop('disabled', false);
+  }, messageDelay + 200);
 }
 
 function attackTurn(attacker, defender, turn) {
@@ -394,7 +401,9 @@ function Combat(player) {
   console.log('Combat !');
   // Announce Combat
   showTurn('combat');
+  // setTimeout of the time the message displays + the time of the exit animation
   setTimeout(() => {
+    // show who's plaing the combat turn
     showTurn('turn', player);
 
     // select the first player to play
@@ -411,6 +420,8 @@ function Combat(player) {
     $('#menu .btn').removeClass('disabled');
     // attack btn
     $('#attackBtn').click(() => {
+      disabledCombatBtn();
+
       // check if turn is odd, if odd the firstPlayer play else the second one
       if (turns % 2 !== 0) {
         attackTurn(firstPlayer, secondPlayer, turns);
@@ -423,6 +434,7 @@ function Combat(player) {
     });
     // defend btn
     $('#defendBtn').click(() => {
+      disabledCombatBtn();
       if (turns % 2 !== 0) {
         defend(firstPlayer, turns);
         changeCursor(secondPlayer);
@@ -434,7 +446,7 @@ function Combat(player) {
       }
       turns += 1;
     });
-  }, messageDelay);
+  }, messageDelay + 200);
 }
 
 //  /////////////////////////
@@ -460,12 +472,12 @@ function checkDead(player) {
 }
 
 function win(winner) {
-  // disabled the attack/defend buttons and remove the click event
+  // disable the attack/defend buttons and remove the click event
   $('.btn')
     .addClass('disabled')
     .off();
   // remove the click event and the 'movement' class
-  removeMoveHighlight();
+  // removeMoveHighlight();
   // show the game over message
   $('#board')
     .addClass('overlay')
@@ -489,7 +501,7 @@ function checkIfAdjacent() {
     return false;
   }
 }
-// update the position of an object
+// update the position of an object by getting the 'x' and 'y' attributes
 function updatePosition(obj, target) {
   const positionX = parseInt(
     $(target)
@@ -519,7 +531,7 @@ function changeCursor(player) {
 
 function showTurn(type, player) {
   // remove the overlayText if it exist
-  $('.overlayText').remove();
+  // $('.overlayText').remove();
   // show who's turn it is
   $('#board').addClass('overlay');
   if (type === 'turn') {
@@ -530,18 +542,19 @@ function showTurn(type, player) {
 
   $('.overlayText').addClass('animated bounceIn');
   setTimeout(() => {
-    // remove the text after 1s
+    // hide the text after 1s
     $('#board').removeClass('overlay');
     $('.overlayText').addClass('animated zoomOut');
   }, messageDelay);
+  setTimeout(() => {
+    // remove the div after the exit animation
+    $('.overlayText').remove();
+  }, messageDelay + 200);
 }
 
 function play(player) {
   showTurn('turn', player);
   setTimeout(() => {
-    setTimeout(() => {
-      $('.overlayText').remove();
-    }, 500);
     // change the cursor acording to the player that play
     changeCursor(player);
     // display movement for player
@@ -562,12 +575,11 @@ function play(player) {
 }
 
 $(() => {
-  // Map
+  // Generate the map (x tiles by y tiles)
   generateMap(10, 10);
 
   console.log(map);
 
-  // Start
-
+  // Start with 'player1'
   play(player1);
 });

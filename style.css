@@ -93,8 +93,13 @@ body {
 }
 
 #menu .btn {
+  border: none;
+  cursor: inherit;
+  font-family: gameOver, cursive;
+  font-size: 16px;
+  color: rgb(255, 248, 192);
   margin: 15px;
-  width: 140px;
+  width: 170px;
   display: inline-block;
   position: relative;
   text-align: center;
@@ -132,7 +137,7 @@ body {
 #attackBtn,
 #attackBtn.disabled:hover,
 #attackBtn.disabled:focus {
-  background: #e76e55;
+  background: #ee3e31;
   box-shadow: inset -4px -4px 0px 0px #8c2022;
 }
 #attackBtn:hover,
