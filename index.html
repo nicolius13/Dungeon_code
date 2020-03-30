@@ -9,41 +9,43 @@
   </head>
   <body>
     <div id="app">
-      <div id="board">
-        <!-- <div class="mapRow" x="1">
+      <game id="game" v-once>
+        <!-- <div id="board">
+          <div class="mapRow" x="1">
           <div class="tile wall" y="1">
             <div class="objects"></div>
           </div>
+        </div>
+        </div>
+        <div id="menu">
+          <h2>MENU</h2>
+          <div id="charSheet">
+            <div class="character knight">
+              <h3>KNIGHT</h3>
+              <p>Life: <span id="player1Life"></span></p>
+              <p>Weapon: <span id="player1Weapon"></span></p>
+              <p>Damage: <span id="player1Damage"></span></p>
+            </div>
+            <div class="character mage">
+              <h3>MAGE</h3>
+              <p>Life: <span id="player2Life"></span></p>
+              <p>Weapon: <span id="player2Weapon"></span></p>
+              <p>Damage: <span id="player2Damage"></span></p>
+            </div>
+          </div>
+          <div id="menuBtn">
+            <button id="attackBtn" class="btn disabled">Attack</button>
+            <button id="defendBtn" class="btn disabled">Defend</button>
+          </div>
+          <div class="combatLog">
+            <ul></ul>
+          </div>
         </div> -->
-      </div>
-      <div id="menu">
-        <h2>MENU</h2>
-        <div id="charSheet">
-          <div class="character knight">
-            <h3>KNIGHT</h3>
-            <p>Life: <span id="player1Life"></span></p>
-            <p>Weapon: <span id="player1Weapon"></span></p>
-            <p>Damage: <span id="player1Damage"></span></p>
-          </div>
-          <div class="character mage">
-            <h3>MAGE</h3>
-            <p>Life: <span id="player2Life"></span></p>
-            <p>Weapon: <span id="player2Weapon"></span></p>
-            <p>Damage: <span id="player2Damage"></span></p>
-          </div>
-        </div>
-        <div id="menuBtn">
-          <button id="attackBtn" class="btn disabled">Attack</button>
-          <button id="defendBtn" class="btn disabled">Defend</button>
-        </div>
-        <div class="combatLog">
-          <ul></ul>
-        </div>
-      </div>
+      </game>
     </div>
 
     <script src="./Assets/JS/jQuery.js"></script>
-    <!-- <script src="./Assets/JS/vue.js"></script> -->
+    <script src="./Assets/JS/vue.js"></script>
     <script src="./script.js"></script>
   </body>
 </html>
