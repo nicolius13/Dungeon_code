@@ -454,7 +454,8 @@ export default Vue.extend({
         if (checkDead(defender)) {
           console.log(`${attacker.coolName} is dead`);
           // stop the game
-          return win(attacker.coolName);
+          win(attacker.coolName);
+          return;
         } else {
           showTurn('turn', defender);
         }
@@ -558,11 +559,18 @@ export default Vue.extend({
       // remove the click event and the 'movement' class
       // removeMoveHighlight();
       // show the game over message
-      $('#board')
-        .addClass('overlay')
-        .append(`<h1 class="overlayText gameOver">Game Over</h1> <h3 class="overlayText winner">${winner} won !</h3>`);
+      $('#board').addClass('overlay').append(`
+        <h1 class="overlayText gameOver">Game Over</h1> 
+        <h3 class="overlayText winner">${winner} won !</h3>
+        <h2 class="overlayText returnLink">Return</h2>
+        `);
       $('.overlayText').addClass('animated bounceIn');
-      return true;
+      // reload the page
+      $('.returnLink').click(() => {
+        location.reload();
+      });
+
+      return;
     }
 
     // check if playes are adjacent to each other
@@ -814,10 +822,23 @@ export default Vue.extend({
 }
 
 .winner {
-  font-size: 19px;
+  font-size: 25px;
   width: 400px;
   top: 50%;
   left: Calc(50% - 200px);
+}
+
+.returnLink {
+  font-size: 20px;
+  width: 400px;
+  top: 60%;
+  left: Calc(50% - 200px);
+  transition: all 0.3s ease-in-out;
+}
+.returnLink:hover {
+  transform: scale(1.2);
+  color: #9b1315;
+  transition: all 0.3s ease-in-out;
 }
 
 /*  /////////////////////// 

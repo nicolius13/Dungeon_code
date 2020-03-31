@@ -26,7 +26,7 @@
         <h2 class="mainLinks" @click="toggleOptions">Return</h2>
       </div>
     </div>
-    <Game v-if="start" v-once :mapX="mapX" :mapY="mapY" />
+    <Game v-if="start" v-once :mapX="mapX" :mapY="mapY" @exitGame="startGame" />
   </div>
 </template>
 
@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     startGame() {
-      this.start = true;
+      this.start = !this.start;
       this.menu = !this.menu;
     },
     toggleOptions() {
