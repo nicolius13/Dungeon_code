@@ -41,6 +41,14 @@ var $ = global.jQuery;
 window.$ = $;
 
 export default Vue.extend({
+  props: {
+    mapX: {
+      default: 10,
+    },
+    mapY: {
+      default: 10,
+    },
+  },
   mounted: function() {
     //  /////////////////////////
     //     OBJECTS AND ARRAYS
@@ -49,6 +57,8 @@ export default Vue.extend({
     // VARIABLES
 
     const messageDelay = 1000;
+    const mapWidth = this.mapX;
+    const mapHeight = this.mapY;
 
     // MAP
     let map = [];
@@ -644,8 +654,10 @@ export default Vue.extend({
     }
 
     $(() => {
+      console.log(mapWidth, mapHeight);
+
       // Generate the map (x tiles by y tiles)
-      generateMap(10, 10);
+      generateMap(mapWidth, mapHeight);
 
       console.log(map);
 

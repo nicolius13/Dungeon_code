@@ -26,7 +26,7 @@
         <h2 class="mainLinks" @click="toggleOptions">Return</h2>
       </div>
     </div>
-    <Game v-if="start" v-once />
+    <Game v-if="start" v-once :mapX="mapX" :mapY="mapY" />
   </div>
 </template>
 
@@ -61,8 +61,8 @@ export default {
       switch (event.target.attributes.data.nodeValue) {
         case 'upX':
           this.mapX++;
-          if (this.mapX > 20) {
-            this.mapX = 20;
+          if (this.mapX > 15) {
+            this.mapX = 15;
           }
           break;
         case 'dwnX':
@@ -73,8 +73,8 @@ export default {
           break;
         case 'upY':
           this.mapY++;
-          if (this.mapY > 20) {
-            this.mapY = 20;
+          if (this.mapY > 15) {
+            this.mapY = 15;
           }
           break;
         case 'dwnY':
@@ -85,14 +85,17 @@ export default {
           break;
       }
     },
+    // only numbers are possible so remplace anyting else by an empty string.
+    // transform the result into an integer
     onlyNumbers(type) {
-      this[type] = this[type].replace(/[^0-9]/g, '');
+      this[type] = parseInt(this[type].replace(/[^0-9]/g, ''));
     },
+    // limit the numbers from 5 to 15
     numberLimits(type) {
       if (this[type] < 5) {
         this[type] = 5;
-      } else if (this[type] > 20) {
-        this[type] = 20;
+      } else if (this[type] > 15) {
+        this[type] = 15;
       }
     },
   },
