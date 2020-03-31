@@ -3,8 +3,8 @@
     <div class="mainMenu" v-if="menu">
       <img class="title" src=".\assets\img\Title\title.gif" alt="Dungeon" />
       <div class="menuSelect">
-        <h2 class="mainLinks" @click="startGame()">New Game</h2>
-        <h2 class="mainLinks" @click="toggleOptions()">Options</h2>
+        <h2 class="mainLinks" @click="toggleGame">New Game</h2>
+        <h2 class="mainLinks" @click="toggleOptions">Options</h2>
       </div>
     </div>
     <div id="options" class="mainMenu" v-if="options">
@@ -26,7 +26,7 @@
         <h2 class="mainLinks" @click="toggleOptions">Return</h2>
       </div>
     </div>
-    <Game v-if="start" v-once :mapX="mapX" :mapY="mapY" @exitGame="startGame" />
+    <Game v-if="start" :mapX="mapX" :mapY="mapY" @exitGame="toggleGame" />
   </div>
 </template>
 
@@ -48,7 +48,7 @@ export default {
     };
   },
   methods: {
-    startGame() {
+    toggleGame() {
       this.start = !this.start;
       this.menu = !this.menu;
     },

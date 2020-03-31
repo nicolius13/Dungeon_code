@@ -35,12 +35,11 @@
 </template>
 
 <script>
-import Vue from 'vue';
 global.jQuery = require('jquery');
 var $ = global.jQuery;
 window.$ = $;
 
-export default Vue.extend({
+export default {
   props: {
     mapX: {
       default: 10,
@@ -56,6 +55,7 @@ export default Vue.extend({
 
     // VARIABLES
 
+    const self = this;
     const messageDelay = 1000;
     const mapWidth = this.mapX;
     const mapHeight = this.mapY;
@@ -77,7 +77,7 @@ export default Vue.extend({
       name: 'player1',
       coolName: 'Knight',
       life: 100,
-      weapon: { name: 'fist', damage: 10 },
+      weapon: { name: 'fist', damage: 50 },
       defending: false,
       turn: true,
       position: [],
@@ -88,7 +88,7 @@ export default Vue.extend({
       name: 'player2',
       coolName: 'Mage',
       life: 100,
-      weapon: { name: 'fist', damage: 10 },
+      weapon: { name: 'fist', damage: 50 },
       defending: false,
       turn: false,
       position: [],
@@ -452,7 +452,6 @@ export default Vue.extend({
         turnLog(attacker, turn);
         // check if the defender is dead
         if (checkDead(defender)) {
-          console.log(`${attacker.coolName} is dead`);
           // stop the game
           win(attacker.coolName);
           return;
@@ -471,7 +470,6 @@ export default Vue.extend({
     }
 
     function Combat(player) {
-      console.log('Combat !');
       // Announce Combat
       showTurn('combat');
       // setTimeout of the time the message displays + the time of the exit animation
@@ -550,7 +548,6 @@ export default Vue.extend({
         return false;
       }
     }
-
     function win(winner) {
       // disable the attack/defend buttons and remove the click event
       $('.btn')
@@ -560,14 +557,14 @@ export default Vue.extend({
       // removeMoveHighlight();
       // show the game over message
       $('#board').addClass('overlay').append(`
-        <h1 class="overlayText gameOver">Game Over</h1> 
+        <h1 class="overlayText gameOver">Game Over</h1>
         <h3 class="overlayText winner">${winner} won !</h3>
         <h2 class="overlayText returnLink">Return</h2>
         `);
       $('.overlayText').addClass('animated bounceIn');
-      // reload the page
-      $('.returnLink').click(() => {
-        location.reload();
+      // return to the menu ( emit a event that's catched by app.vue)
+      $('.returnLink').click(function() {
+        self.$emit('exitGame');
       });
 
       return;
@@ -662,8 +659,6 @@ export default Vue.extend({
     }
 
     $(() => {
-      console.log(mapWidth, mapHeight);
-
       // Generate the map (x tiles by y tiles)
       generateMap(mapWidth, mapHeight);
 
@@ -673,7 +668,7 @@ export default Vue.extend({
       play(player1);
     });
   },
-});
+};
 </script>
 
 <style>
