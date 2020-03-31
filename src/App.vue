@@ -127,16 +127,11 @@ body {
   color: rgb(255, 248, 192);
   cursor: url(./assets/img/Cursor/cursor_player1.png), auto;
 }
-#app,
-#game {
+
+#app {
   display: flex;
   justify-content: center;
-}
-#app {
   height: 100%;
-}
-#game {
-  padding-top: 20px;
 }
 
 /*  /////////////////////// 

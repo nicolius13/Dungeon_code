@@ -684,15 +684,21 @@ export default {
 </script>
 
 <style>
+#game {
+  /* padding-top: 20px; */
+  display: flex;
+  align-items: center;
+}
 #board {
   position: relative;
 }
+
 /*  /////////////////////// 
         IN GAME MENU
     ////////////////////// */
 
 #menu {
-  margin: 20px;
+  margin: 20px 20px 0 20px;
   font-family: gameOver, cursive;
 }
 
