@@ -21,18 +21,18 @@
       <div id="options" class="mainMenu" v-if="options">
         <h6>map width :</h6>
         <div class="number-spinner">
-          <button @click="spinner" class="btn" data="dwnX">-</button>
-          <input v-model="mapX" type="text" />
-          <button @click="spinner" class="btn" data="upX">+</button>
+          <button @click="spinner" class="btn spinnerBtn minus" data="dwnX">-</button>
+          <input class="spinner" v-model="mapX" @input="onlyNumbers('mapX')" @blur="numberLimits('mapX')" type="text" />
+          <button @click="spinner" class="btn spinnerBtn plus" data="upX">+</button>
         </div>
         <h6>map height :</h6>
         <div class="number-spinner">
-          <button @click="spinner" class="btn" data="dwnY">-</button>
-          <input v-model="mapY" type="text" />
-          <button @click="spinner" class="btn" data="upY">+</button>
+          <button @click="spinner" class="btn spinnerBtn minus" data="dwnY">-</button>
+          <input class="spinner" v-model="mapY" @input="onlyNumbers('mapY')" @blur="numberLimits('mapY')" type="text" />
+          <button @click="spinner" class="btn spinnerBtn plus" data="upY">+</button>
         </div>
 
-        <h2 class="mainLinks" @click="toggleOptions()">Return</h2>
+        <h2 class="mainLinks" @click="toggleOptions">Return</h2>
       </div>
 
       <!-- /////////////////////

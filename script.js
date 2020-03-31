@@ -638,20 +638,43 @@ new Vue({
       this.options = !this.options;
       this.menu = !this.menu;
     },
+    // OPTIONS
     spinner(event) {
       switch (event.target.attributes.data.nodeValue) {
         case 'upX':
           this.mapX++;
+          if (this.mapX > 20) {
+            this.mapX = 20;
+          }
           break;
         case 'dwnX':
           this.mapX--;
+          if (this.mapX < 5) {
+            this.mapX = 5;
+          }
           break;
         case 'upY':
           this.mapY++;
+          if (this.mapY > 20) {
+            this.mapY = 20;
+          }
           break;
         case 'dwnY':
           this.mapY--;
+          if (this.mapY < 5) {
+            this.mapY = 5;
+          }
           break;
+      }
+    },
+    onlyNumbers(type) {
+      this[type] = this[type].replace(/[^0-9]/g, '');
+    },
+    numberLimits(type) {
+      if (this[type] < 5) {
+        this[type] = 5;
+      } else if (this[type] > 20) {
+        this[type] = 20;
       }
     },
   },
