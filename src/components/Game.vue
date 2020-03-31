@@ -1,9 +1,46 @@
-//  /////////////////////////
-//     JQUERY GAME
-//  /////////////////////////
-Vue.component('game', {
-  template:
-    ' <div> <div id="board"> </div> <div id="menu"> <h2>MENU</h2>  <div id="charSheet"> <div class="character knight"> <h3>KNIGHT</h3> <p>Life: <span id="player1Life"></span></p> <p>Weapon: <span id="player1Weapon"></span></p> <p>Damage: <span id="player1Damage"></span></p> </div> <div class="character mage"> <h3>MAGE</h3>  <p>Life: <span id="player2Life"></span></p>      <p>Weapon: <span id="player2Weapon"></span></p>  <p>Damage: <span id="player2Damage"></span></p>    </div>  </div>  <div id="menuBtn">    <button id="attackBtn" class="btn disabled">Attack</button>    <button id="defendBtn" class="btn disabled">Defend</button>  </div>  <div class="combatLog">    <ul></ul>  </div></div> </div>',
+<template>
+  <div id="game">
+    <div id="board">
+      <!-- <div class="mapRow" x="1">
+        <div class="tile wall" y="1">
+          <div class="objects"></div>
+        </div>
+      </div> -->
+    </div>
+    <div id="menu">
+      <h2>MENU</h2>
+      <div id="charSheet">
+        <div class="character knight">
+          <h3>KNIGHT</h3>
+          <p>Life: <span id="player1Life"></span></p>
+          <p>Weapon: <span id="player1Weapon"></span></p>
+          <p>Damage: <span id="player1Damage"></span></p>
+        </div>
+        <div class="character mage">
+          <h3>MAGE</h3>
+          <p>Life: <span id="player2Life"></span></p>
+          <p>Weapon: <span id="player2Weapon"></span></p>
+          <p>Damage: <span id="player2Damage"></span></p>
+        </div>
+      </div>
+      <div id="menuBtn">
+        <button id="attackBtn" class="btn disabled">Attack</button>
+        <button id="defendBtn" class="btn disabled">Defend</button>
+      </div>
+      <div class="combatLog">
+        <ul></ul>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import Vue from 'vue';
+global.jQuery = require('jquery');
+var $ = global.jQuery;
+window.$ = $;
+
+export default Vue.extend({
   mounted: function() {
     //  /////////////////////////
     //     OBJECTS AND ARRAYS
@@ -19,11 +56,11 @@ Vue.component('game', {
     // WEAPONS
     // to add weapon : key must be the same as the 'name' value and the name of the '.png'
     const weapons = {
-      fist: { name: 'fist', damage: 10, img: './Assets/img/Weapons/fist.png' },
-      sword: { name: 'sword', damage: 25, position: [], img: './Assets/img/Weapons/sword.png' },
-      hammer: { name: 'hammer', damage: 15, position: [], img: './Assets/img/Weapons/hammer.png' },
-      axe: { name: 'axe', damage: 20, position: [], img: './Assets/img/Weapons/axe.png' },
-      club: { name: 'club', damage: 12, position: [], img: './Assets/img/Weapons/club.png' },
+      fist: { name: 'fist', damage: 10, img: require('../assets/img/Weapons/fist.png') },
+      sword: { name: 'sword', damage: 25, position: [], img: require('../assets/img/Weapons/sword.png') },
+      hammer: { name: 'hammer', damage: 15, position: [], img: require('../assets/img/Weapons/hammer.png') },
+      axe: { name: 'axe', damage: 20, position: [], img: require('../assets/img/Weapons/axe.png') },
+      club: { name: 'club', damage: 12, position: [], img: require('../assets/img/Weapons/club.png') },
     };
     // PLAYERS
     let player1 = {
@@ -34,7 +71,8 @@ Vue.component('game', {
       defending: false,
       turn: true,
       position: [],
-      img: './Assets/img/Players/knight_idle-sprit.png',
+      img: require('../assets/img/Players/knight_idle-sprit.png'),
+      cursorImg: require('../assets/img/Cursor/cursor_player1.png'),
     };
     let player2 = {
       name: 'player2',
@@ -44,7 +82,8 @@ Vue.component('game', {
       defending: false,
       turn: false,
       position: [],
-      img: './Assets/img/Players/mage_idle-sprit.png',
+      img: require('../assets/img/Players/mage_idle-sprit.png'),
+      cursorImg: require('../assets/img/Cursor/cursor_player2.png'),
     };
 
     //  /////////////////////////
@@ -100,15 +139,15 @@ Vue.component('game', {
     function floorStyling() {
       const rand = Math.floor(Math.random() * 100);
       if (rand < 5) {
-        return './Assets/img/Map/Floors/floor_2.png';
+        return require('../assets/img/Map/Floors/floor_2.png');
       } else if (rand >= 5 && rand < 15) {
-        return './Assets/img/Map/Floors/floor_3.png';
+        return require('../assets/img/Map/Floors/floor_3.png');
       } else if (rand >= 15 && rand < 18) {
-        return './Assets/img/Map/Floors/floor_4.png';
+        return require('../assets/img/Map/Floors/floor_4.png');
       } else if (rand >= 18 && rand < 28) {
-        return './Assets/img/Map/Floors/floor_5.png';
+        return require('../assets/img/Map/Floors/floor_5.png');
       } else {
-        return './Assets/img/Map/Floors/floor_1.png';
+        return require('../assets/img/Map/Floors/floor_1.png');
       }
     }
     // render tiles and objects
@@ -128,7 +167,7 @@ Vue.component('game', {
               $('.floor:last').append(`<div class="${obj} player"></div>`);
             } else {
               $('.floor:last').append(`<div class="${obj} weapons"></div>`);
-              $('.weapons:last').css('backgroundImage', `url(./Assets/img/Weapons/${obj}.png)`);
+              $('.weapons:last').css('backgroundImage', `url(${weapons[obj].img})`);
             }
           }
         }
@@ -299,7 +338,7 @@ Vue.component('game', {
       $(`.${player.name}`)
         .parent()
         .append(`<div class="${weapon} weapons"></div>`);
-      $(`.${weapon}`).css('backgroundImage', `url(./Assets/img/Weapons/${weapon}.png)`);
+      $(`.${weapon}`).css('backgroundImage', `url(${weapons[weapon].img})`);
     }
 
     function moveWeapon(player, weapon) {
@@ -556,7 +595,7 @@ Vue.component('game', {
     }
 
     function changeCursor(player) {
-      $('body').css('cursor', `url(./Assets/img/Cursor/cursor_${player.name}.png), auto`);
+      $('body').css('cursor', `url(${player.cursorImg}), auto`);
     }
 
     function showTurn(type, player) {
@@ -615,67 +654,450 @@ Vue.component('game', {
     });
   },
 });
+</script>
 
-//  /////////////////////////
-//          VUE APP
-//  /////////////////////////
+<style>
+/*  /////////////////////// 
+        IN GAME MENU
+    ////////////////////// */
 
-new Vue({
-  el: '#app',
-  data: {
-    start: false,
-    menu: true,
-    options: false,
-    mapX: 10,
-    mapY: 10,
-  },
-  methods: {
-    startGame() {
-      this.start = true;
-      this.menu = !this.menu;
-    },
-    toggleOptions() {
-      this.options = !this.options;
-      this.menu = !this.menu;
-    },
-    // OPTIONS
-    spinner(event) {
-      switch (event.target.attributes.data.nodeValue) {
-        case 'upX':
-          this.mapX++;
-          if (this.mapX > 20) {
-            this.mapX = 20;
-          }
-          break;
-        case 'dwnX':
-          this.mapX--;
-          if (this.mapX < 5) {
-            this.mapX = 5;
-          }
-          break;
-        case 'upY':
-          this.mapY++;
-          if (this.mapY > 20) {
-            this.mapY = 20;
-          }
-          break;
-        case 'dwnY':
-          this.mapY--;
-          if (this.mapY < 5) {
-            this.mapY = 5;
-          }
-          break;
-      }
-    },
-    onlyNumbers(type) {
-      this[type] = this[type].replace(/[^0-9]/g, '');
-    },
-    numberLimits(type) {
-      if (this[type] < 5) {
-        this[type] = 5;
-      } else if (this[type] > 20) {
-        this[type] = 20;
-      }
-    },
-  },
-});
+#menu {
+  margin: 20px;
+  font-family: gameOver, cursive;
+}
+
+#menu h2 {
+  text-align: center;
+  font-size: 20px;
+  padding-bottom: 5px;
+  border-bottom: 3px solid rgb(255, 248, 192);
+}
+#menu p {
+  font-size: 10px;
+}
+
+/* Charsheet */
+#charSheet {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+.character {
+  margin: 15px;
+  padding: 10px 20px;
+  max-width: 500px;
+  min-width: 182px;
+  border-style: solid;
+  border-width: 5px;
+  border-image-slice: 3;
+  border-image-width: 3;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(0,0,0)" /></svg>');
+  border-image-outset: 0;
+}
+.knight,
+.knight h3 {
+  background-color: rgb(231, 53, 53);
+}
+.mage,
+.mage h3 {
+  background-color: rgb(43, 159, 226);
+}
+
+.character h3 {
+  margin: -2rem auto 1rem;
+  display: table;
+  padding: 12px 12px;
+  border-style: solid;
+  border-width: 5px;
+  border-image-slice: 3;
+  border-image-width: 3;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(0,0,0)" /></svg>');
+  border-image-outset: 0;
+}
+
+/* Buttons */
+#menuBtn {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+/* CombatLog */
+.combatLog {
+  overflow: auto;
+  height: 250px;
+  font-size: 10px;
+  line-height: 16px;
+}
+.combatLog ul {
+  list-style: none;
+  padding: 0;
+}
+
+.combatLog li {
+  padding: 1em;
+}
+.combatLog li.player2Turn {
+  background-color: rgb(43, 159, 226);
+}
+.combatLog li.player1Turn {
+  background-color: rgb(231, 53, 53);
+}
+
+.scroller {
+  width: 300px;
+  height: 100px;
+  overflow-y: scroll;
+  scrollbar-color: rebeccapurple green;
+  scrollbar-width: thin;
+}
+/*  /////////////////////// 
+        ANNOUNCEMENT
+    ////////////////////// */
+
+.overlay::after {
+  content: '';
+  background: rgba(0, 0, 0, 0.4);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+.overlayText {
+  color: rgb(255, 0, 0);
+  font-family: gameOver, monospace;
+  text-align: center;
+  position: absolute;
+  z-index: 99;
+}
+
+.player1Announce {
+  color: rgb(231, 53, 53);
+  font-size: 40px;
+  width: 600px;
+  top: 40%;
+  left: Calc(50% - 300px);
+}
+
+.player2Announce {
+  color: rgb(43, 159, 226);
+  font-size: 40px;
+  width: 600px;
+  top: 40%;
+  left: Calc(50% - 300px);
+}
+
+.gameOver {
+  font-size: 40px;
+  width: 600px;
+  top: 40%;
+  left: Calc(50% - 300px);
+}
+
+.winner {
+  font-size: 19px;
+  width: 400px;
+  top: 50%;
+  left: Calc(50% - 200px);
+}
+
+/*  /////////////////////// 
+            MAP
+    ////////////////////// */
+
+.mapRow {
+  display: flex;
+}
+
+.floor {
+  background: url(../assets/img/Map/Floors/floor_1.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 70px;
+  width: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.wall {
+  background-image: url(../assets/img/Map/wall_mid.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 70px;
+  width: 70px;
+}
+.sideLimit {
+  background-image: url(../assets/img/Map/wall_sides.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 70px;
+  width: 22px;
+}
+
+.topBotLimit {
+  background-image: url(../assets/img/Map/wall_bottom_mid.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 74px;
+  width: 70px;
+}
+
+.sideTopLeft {
+  background-image: url(../assets/img/Map/wall_side_top_left.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 74px;
+  width: 22px;
+}
+.sideTopRight {
+  background-image: url(../assets/img/Map/wall_side_top_right.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 74px;
+  width: 22px;
+}
+.sideBottomLeft {
+  background-image: url(../assets/img/Map/wall_side_bottom_left.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 74px;
+  width: 22px;
+}
+.sideBottomRight {
+  background-image: url(../assets/img/Map/wall_side_bottom_right.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 74px;
+  width: 22px;
+}
+
+/*  /////////////////////// 
+            WEAPONS
+    ////////////////////// */
+
+.weapons {
+  width: 15px;
+  height: 32px;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.animWeapon {
+  -webkit-animation: weaponAnime 0.3s ease-in-out;
+  -moz-animation: weaponAnime 0.3s ease-in-out;
+  -ms-animation: weaponAnime 0.3s ease-in-out;
+  -o-animation: weaponAnime 0.3s ease-in-out;
+  animation: weaponAnime 0.3s ease-in-out;
+}
+@-webkit-keyframes play {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  50% {
+    -webkit-transform: rotate(90deg);
+  }
+  100% {
+    -webkit-transform: rotate(0deg);
+  }
+}
+@-moz-keyframes play {
+  0% {
+    -moz-transform: rotate(0deg);
+  }
+  50% {
+    -moz-transform: rotate(90deg);
+  }
+  100% {
+    -moz-transform: rotate(0deg);
+  }
+}
+@-ms-keyframes play {
+  0% {
+    -ms-transform: rotate(0deg);
+  }
+  50% {
+    -ms-transform: rotate(90deg);
+  }
+  100% {
+    -ms-transform: rotate(0deg);
+  }
+}
+@-o-keyframes play {
+  0% {
+    -o-transform: rotate(0deg);
+  }
+  50% {
+    -o-transform: rotate(90deg);
+  }
+  100% {
+    -o-transform: rotate(0deg);
+  }
+}
+@keyframes weaponAnime {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(90deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.fist {
+  background-position: bottom;
+}
+.animFist {
+  -webkit-animation: fistAnime 0.3s ease-in-out;
+  -moz-animation: fistAnime 0.3s ease-in-out;
+  -ms-animation: fistAnime 0.3s ease-in-out;
+  -o-animation: fistAnime 0.3s ease-in-out;
+  animation: fistAnime 0.3s ease-in-out;
+}
+@-webkit-keyframes play {
+  0% {
+    -webkit-transform: translateX(0);
+  }
+  50% {
+    -webkit-transform: translateX(10px);
+  }
+  100% {
+    -webkit-transform: translateX(0);
+  }
+}
+@-moz-keyframes play {
+  0% {
+    -moz-transform: translateX(0);
+  }
+  50% {
+    -moz-transform: translateX(10px);
+  }
+  100% {
+    -moz-transform: translateX(0);
+  }
+}
+@-ms-keyframes play {
+  0% {
+    -ms-transform: translateX(0);
+  }
+  50% {
+    -ms-transform: translateX(10px);
+  }
+  100% {
+    -ms-transform: translateX(0);
+  }
+}
+@-o-keyframes play {
+  0% {
+    -o-transform: translateX(0);
+  }
+  50% {
+    -o-transform: translateX(10px);
+  }
+  100% {
+    -o-transform: translateX(0);
+  }
+}
+@keyframes fistAnime {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(10px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/*  /////////////////////// 
+            PLAYERS
+    ////////////////////// */
+
+.player {
+  height: 46px;
+  width: 33px;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.player1 {
+  background-image: url(../assets/img/Players/knight_idle-sprit.png);
+}
+.player2 {
+  background-image: url(../assets/img/Players/mage_idle-sprit.png);
+}
+.player1,
+.player2 {
+  background-size: cover;
+  -webkit-animation: play 0.8s steps(4) infinite;
+  -moz-animation: play 0.8s steps(4) infinite;
+  -ms-animation: play 0.8s steps(4) infinite;
+  -o-animation: play 0.8s steps(4) infinite;
+  animation: play 0.8s steps(4) infinite;
+}
+@-webkit-keyframes play {
+  0% {
+    background-position: 0px;
+  }
+  100% {
+    background-position: -134px;
+  }
+}
+@-moz-keyframes play {
+  0% {
+    background-position: 0px;
+  }
+  100% {
+    background-position: -134px;
+  }
+}
+@-ms-keyframes play {
+  0% {
+    background-position: 0px;
+  }
+  100% {
+    background-position: -134px;
+  }
+}
+@-o-keyframes play {
+  0% {
+    background-position: 0px;
+  }
+  100% {
+    background-position: -134px;
+  }
+}
+@keyframes play {
+  0% {
+    background-position: 0px;
+  }
+  100% {
+    background-position: -134px;
+  }
+}
+
+/*  /////////////////////// 
+            MOVEMENT
+    ////////////////////// */
+
+.movement::after {
+  content: '';
+  background: rgba(0, 0, 0, 0.3);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+</style>
