@@ -14,25 +14,43 @@
 
     <div id="app">
       <div class="mainMenu" v-if="menu">
-        <h2 class="mainLinks" @click="startGame()">New Game</h2>
-        <h2 class="mainLinks" @click="toggleOptions()">Option</h2>
+        <img class="title" src="./Assets/img/Title/title.gif" alt="Dungeon" />
+        <div class="menuSelect">
+          <h2 class="mainLinks" @click="startGame()">New Game</h2>
+          <h2 class="mainLinks" @click="toggleOptions()">Options</h2>
+        </div>
       </div>
 
       <div id="options" class="mainMenu" v-if="options">
-        <h6>map width :</h6>
-        <div class="number-spinner">
-          <button @click="spinner" class="btn spinnerBtn minus" data="dwnX">-</button>
-          <input class="spinner" v-model="mapX" @input="onlyNumbers('mapX')" @blur="numberLimits('mapX')" type="text" />
-          <button @click="spinner" class="btn spinnerBtn plus" data="upX">+</button>
-        </div>
-        <h6>map height :</h6>
-        <div class="number-spinner">
-          <button @click="spinner" class="btn spinnerBtn minus" data="dwnY">-</button>
-          <input class="spinner" v-model="mapY" @input="onlyNumbers('mapY')" @blur="numberLimits('mapY')" type="text" />
-          <button @click="spinner" class="btn spinnerBtn plus" data="upY">+</button>
-        </div>
+        <img class="title" src="./Assets/img/Title/title.gif" alt="Dungeon" />
+        <div class="menuSelect">
+          <h6>map width :</h6>
+          <div class="number-spinner">
+            <button @click="spinner" class="btn spinnerBtn minus" data="dwnX">-</button>
+            <input
+              class="spinner"
+              v-model="mapX"
+              @input="onlyNumbers('mapX')"
+              @blur="numberLimits('mapX')"
+              type="text"
+            />
+            <button @click="spinner" class="btn spinnerBtn plus" data="upX">+</button>
+          </div>
+          <h6>map height :</h6>
+          <div class="number-spinner">
+            <button @click="spinner" class="btn spinnerBtn minus" data="dwnY">-</button>
+            <input
+              class="spinner"
+              v-model="mapY"
+              @input="onlyNumbers('mapY')"
+              @blur="numberLimits('mapY')"
+              type="text"
+            />
+            <button @click="spinner" class="btn spinnerBtn plus" data="upY">+</button>
+          </div>
 
-        <h2 class="mainLinks" @click="toggleOptions">Return</h2>
+          <h2 class="mainLinks" @click="toggleOptions">Return</h2>
+        </div>
       </div>
 
       <!-- /////////////////////

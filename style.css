@@ -27,6 +27,9 @@ body {
 #app {
   height: 100%;
 }
+#game {
+  padding-top: 20px;
+}
 #board {
   position: relative;
 }
@@ -126,13 +129,27 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   width: 520px;
   padding: 0 60px;
   background-color: rgb(37, 37, 37);
 }
+
+.title {
+  width: 640px;
+}
+
+.menuSelect {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .mainLinks {
   font-size: 45px;
+  /* justify-self: center; */
+  /* align-self: center; */
   color: #8c2022;
   transition: all 0.4s ease-in-out;
 }
