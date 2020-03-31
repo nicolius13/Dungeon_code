@@ -138,9 +138,6 @@ body {
 #game {
   padding-top: 20px;
 }
-#board {
-  position: relative;
-}
 
 /*  /////////////////////// 
         BUTTONS

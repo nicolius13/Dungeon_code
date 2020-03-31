@@ -23,12 +23,15 @@
           <p>Damage: <span id="player2Damage"></span></p>
         </div>
       </div>
-      <div id="menuBtn">
+      <div class="menuBtn">
         <button id="attackBtn" class="btn disabled">Attack</button>
         <button id="defendBtn" class="btn disabled">Defend</button>
       </div>
       <div class="combatLog">
         <ul></ul>
+      </div>
+      <div class="exitLink">
+        <a class="returnLink exit">Exit Game</a>
       </div>
     </div>
   </div>
@@ -36,7 +39,7 @@
 
 <script>
 global.jQuery = require('jquery');
-var $ = global.jQuery;
+const $ = global.jQuery;
 window.$ = $;
 
 export default {
@@ -563,7 +566,7 @@ export default {
         `);
       $('.overlayText').addClass('animated bounceIn');
       // return to the menu ( emit a event that's catched by app.vue)
-      $('.returnLink').click(function() {
+      $('.returnLink').click(() => {
         self.$emit('exitGame');
       });
 
@@ -659,6 +662,15 @@ export default {
     }
 
     $(() => {
+      //  /////////////////////////
+      //      EXIT BTN EVENT
+      //  /////////////////////////
+
+      // return to the menu ( emit a event that's catched by app.vue)
+      $('.returnLink').click(() => {
+        self.$emit('exitGame');
+      });
+
       // Generate the map (x tiles by y tiles)
       generateMap(mapWidth, mapHeight);
 
@@ -672,6 +684,9 @@ export default {
 </script>
 
 <style>
+#board {
+  position: relative;
+}
 /*  /////////////////////// 
         IN GAME MENU
     ////////////////////// */
@@ -734,11 +749,8 @@ export default {
 }
 
 /* Buttons */
-#menuBtn {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
+.menuBtn {
+  text-align: center;
 }
 
 /* CombatLog */
@@ -762,13 +774,14 @@ export default {
 .combatLog li.player1Turn {
   background-color: rgb(231, 53, 53);
 }
-
-.scroller {
-  width: 300px;
-  height: 100px;
-  overflow-y: scroll;
-  scrollbar-color: rebeccapurple green;
-  scrollbar-width: thin;
+/* exit link */
+.exitLink {
+  margin-top: 30px;
+  text-align: center;
+}
+.exit {
+  text-align: center;
+  color: rgb(216, 0, 0);
 }
 /*  /////////////////////// 
         ANNOUNCEMENT
@@ -831,7 +844,6 @@ export default {
   transition: all 0.3s ease-in-out;
 }
 .returnLink:hover {
-  transform: scale(1.2);
   color: #9b1315;
   transition: all 0.3s ease-in-out;
 }
