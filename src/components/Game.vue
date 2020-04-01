@@ -80,6 +80,7 @@ export default {
         new Audio(require('../assets/Sounds/weapons/weapon3_sound.flac')),
         new Audio(require('../assets/Sounds/weapons/weapon4_sound.flac')),
       ],
+      shield: [new Audio(require('../assets/Sounds/defend/shield.wav'))],
       walk: [
         new Audio(require('../assets/Sounds/walk/1steps.mp3')),
         new Audio(require('../assets/Sounds/walk/2steps.mp3')),
@@ -496,10 +497,7 @@ export default {
         playSounds('weapons', randomPicker(sounds.weapons));
         $(`.${attackerWeapon}`).addClass('animWeapon');
       } else {
-        const rand = randomPicker(sounds.fist);
-        console.log(rand);
-
-        playSounds('fist', rand);
+        playSounds('fist', randomPicker(sounds.fist));
         $(`.${attacker.name}`)
           .siblings('.weapons')
           .addClass('animFist');
@@ -523,6 +521,7 @@ export default {
     }
 
     function defend(player, turn) {
+      playSounds('shield', 0);
       // change the defending status of the player
       player.defending = true;
       // put the defence in the combat log
@@ -593,6 +592,8 @@ export default {
     //  /////////////////////////
 
     function playSounds(type, soundIndex, loop) {
+      // reset the current time of the sound to 0 and play it
+      sounds[type][soundIndex].currentTime = 0;
       sounds[type][soundIndex].play();
       // make the sound loop if needed
       if (loop) {
