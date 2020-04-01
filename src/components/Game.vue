@@ -93,6 +93,7 @@ export default {
         new Audio(require('../assets/Sounds/walk/3steps.mp3')),
       ],
       menu: [new Audio(require('../assets/Sounds/menu/select.wav'))],
+      victory: [new Audio(require('../assets/Sounds/victory.mp3'))],
       ambients: [
         new Audio(require('../assets/Sounds/ambient/ambient1.mp3')),
         new Audio(require('../assets/Sounds/ambient/ambient2.mp3')),
@@ -524,7 +525,7 @@ export default {
         // check if the defender is dead
         if (checkDead(defender)) {
           // stop the game
-          win(attacker.coolName);
+          win(attacker);
           return;
         } else {
           showTurn('turn', defender);
@@ -635,16 +636,14 @@ export default {
       }
     }
     function win(winner) {
+      playSounds('victory', 0);
       // disable the attack/defend buttons and remove the click event
       $('.btn')
         .addClass('disabled')
         .off();
-      // remove the click event and the 'movement' class
-      // removeMoveHighlight();
       // show the game over message
       $('#board').addClass('overlay').append(`
-        <h1 class="overlayText gameOver">Game Over</h1>
-        <h3 class="overlayText winner">${winner} won !</h3>
+        <h1 class="overlayText winner win${winner.name}">${winner.coolName} won !</h1>
         <h2 class="overlayText returnLink">Return</h2>
         `);
       $('.overlayText').addClass('animated bounceIn');
@@ -917,18 +916,17 @@ export default {
   left: Calc(50% - 300px);
 }
 
-.gameOver {
+.winner {
   font-size: 40px;
   width: 600px;
   top: 40%;
   left: Calc(50% - 300px);
 }
-
-.winner {
-  font-size: 25px;
-  width: 400px;
-  top: 50%;
-  left: Calc(50% - 200px);
+.winner.winplayer1 {
+  color: rgb(231, 53, 53);
+}
+.winner.winplayer2 {
+  color: rgb(43, 159, 226);
 }
 
 .returnLink {
