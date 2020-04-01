@@ -80,6 +80,12 @@ export default {
         new Audio(require('../assets/Sounds/weapons/weapon3_sound.flac')),
         new Audio(require('../assets/Sounds/weapons/weapon4_sound.flac')),
       ],
+      blocked: [
+        new Audio(require('../assets/Sounds/weapons/block_blade1.wav')),
+        new Audio(require('../assets/Sounds/weapons/block_blade2.wav')),
+        new Audio(require('../assets/Sounds/weapons/block_blunt1.wav')),
+        new Audio(require('../assets/Sounds/weapons/block_blunt2.wav')),
+      ],
       shield: [new Audio(require('../assets/Sounds/defend/shield.wav'))],
       walk: [
         new Audio(require('../assets/Sounds/walk/1steps.mp3')),
@@ -489,12 +495,15 @@ export default {
     function attackTurn(attacker, defender, turn) {
       // attack and save the damage
       const damage = attack(attacker, defender);
-      // reset the defence of the defender
-      defender.defending = false;
+
       // attack animation and sounds
       const attackerWeapon = attacker.weapon.name;
       if (attackerWeapon !== 'fist') {
-        playSounds('weapons', randomPicker(sounds.weapons));
+        if (defender.defending) {
+          playSounds('blocked', randomPicker(sounds.weapons));
+        } else {
+          playSounds('weapons', randomPicker(sounds.weapons));
+        }
         $(`.${attackerWeapon}`).addClass('animWeapon');
       } else {
         playSounds('fist', randomPicker(sounds.fist));
@@ -502,6 +511,9 @@ export default {
           .siblings('.weapons')
           .addClass('animFist');
       }
+      // reset the defence of the defender
+      defender.defending = false;
+      // continue after the attack animation
       setTimeout(() => {
         $(`.${attackerWeapon}`).removeClass('animWeapon animFist');
         // put the attack in the combat log

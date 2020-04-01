@@ -1,9 +1,5 @@
 <template>
   <div id="app">
-    <!-- <audio controls id="myVideo" autoplay loop hidden>
-      <source src="./assets/Sounds/ambient/ambient.mp3" type="audio/wav" />
-      Your browser does not support the audio element.
-    </audio> -->
     <div class="mainMenu" v-if="menu">
       <Title />
       <div class="menuSelect">
