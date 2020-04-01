@@ -94,6 +94,7 @@ export default {
       ],
       menu: [new Audio(require('../assets/Sounds/menu/select.wav'))],
       victory: [new Audio(require('../assets/Sounds/victory.mp3'))],
+      combat: [new Audio(require('../assets/Sounds/fight.mp3'))],
       ambients: [
         new Audio(require('../assets/Sounds/ambient/ambient1.mp3')),
         new Audio(require('../assets/Sounds/ambient/ambient2.mp3')),
@@ -543,6 +544,7 @@ export default {
     }
 
     function Combat(player) {
+      playSounds('combat', 0);
       // Announce Combat
       showTurn('combat');
       // setTimeout of the time the message displays + the time of the exit animation
@@ -702,14 +704,12 @@ export default {
     }
 
     function showTurn(type, player) {
-      // remove the overlayText if it exist
-      // $('.overlayText').remove();
       // show who's turn it is
       $('#board').addClass('overlay');
       if (type === 'turn') {
         $('#board').append(`<h1 class="overlayText ${player.name}Announce">${player.coolName}'turn</h1>`);
       } else if (type === 'combat') {
-        $('#board').append(`<h1 class="overlayText gameOver">Combat !</h1>`);
+        $('#board').append(`<h1 class="overlayText winner">Combat !</h1>`);
       }
 
       $('.overlayText').addClass('animated bounceIn');
