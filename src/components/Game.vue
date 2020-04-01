@@ -50,6 +50,12 @@ export default {
     mapY: {
       default: 10,
     },
+    musicOn: {
+      type: Boolean,
+    },
+    effectsOn: {
+      type: Boolean,
+    },
   },
   mounted: function() {
     //  /////////////////////////
@@ -62,6 +68,8 @@ export default {
     const messageDelay = 1000;
     const mapWidth = this.mapX;
     const mapHeight = this.mapY;
+    const musicOn = this.musicOn;
+    const effectsOn = this.effectsOn;
 
     // MAP
     let map = [];
@@ -607,6 +615,12 @@ export default {
     //  /////////////////////////
 
     function playSounds(type, soundIndex, loop) {
+      // check if musics or effects are on if not don't play them(return)
+      if (type === 'ambients' && !musicOn) {
+        return;
+      } else if (type !== 'ambients' && !effectsOn) {
+        return;
+      }
       // reset the current time of the sound to 0 and play it
       sounds[type][soundIndex].currentTime = 0;
       sounds[type][soundIndex].play();

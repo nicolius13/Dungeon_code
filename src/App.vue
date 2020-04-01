@@ -11,14 +11,30 @@
       <Title />
       <div class="menuSelect">
         <h6>map width :</h6>
-        <NumberSpinner v-model="mapX" :callSounds="playSound" />
+        <NumberSpinner v-model="mapX" :callSounds="playSound" :btnSound="sounds.button" />
         <h6>map height :</h6>
-        <NumberSpinner v-model="mapY" :callSounds="playSound" />
+        <NumberSpinner v-model="mapY" :callSounds="playSound" :btnSound="sounds.button" />
+        <h6>Sounds :</h6>
+        <CheckBoxe
+          v-model="musicOn"
+          :type="'Music'"
+          :callSounds="playSound"
+          :stopMusic="stopSound"
+          :btnSound="sounds.button"
+          :music="sounds.menu"
+        />
+        <CheckBoxe
+          class="checkboxes"
+          v-model="effectsOn"
+          :type="'Effects'"
+          :callSounds="playSound"
+          :btnSound="sounds.button"
+        />
 
         <h2 class="mainLinks" @click="toggleOptions">Return</h2>
       </div>
     </div>
-    <Game v-if="start" :mapX="mapX" :mapY="mapY" @exitGame="toggleGame" />
+    <Game v-if="start" :musicOn="musicOn" :effectsOn="effectsOn" :mapX="mapX" :mapY="mapY" @exitGame="toggleGame" />
   </div>
 </template>
 
@@ -26,6 +42,7 @@
 import Game from './components/Game.vue';
 import NumberSpinner from './components/NumberSpinner';
 import Title from './components/Title';
+import CheckBoxe from './components/CheckBoxe';
 
 export default {
   name: 'App',
@@ -33,6 +50,7 @@ export default {
     Game,
     NumberSpinner,
     Title,
+    CheckBoxe,
   },
   data() {
     return {
@@ -46,20 +64,28 @@ export default {
           isPlaying: false,
           file: new Audio(require('./assets/Sounds/menu/select.wav')),
         },
+        button: {
+          isPlaying: false,
+          file: new Audio(require('./assets/Sounds/menu/button.wav')),
+        },
         menu: {
           isPlaying: false,
           file: new Audio(require('./assets/Sounds/ambient/menu.mp3')),
         },
       },
+      musicOn: false,
+      effectsOn: true,
     };
   },
   methods: {
     toggleGame() {
-      this.playSound(this.sounds.select);
+      this.playSound(this.sounds.select, 'effect');
+
+      // toggle the menu music on/off
       if (this.sounds.menu.isPlaying === true) {
         this.stopSound(this.sounds.menu);
       } else {
-        this.playSound(this.sounds.menu, true);
+        this.playSound(this.sounds.menu, 'music', true);
       }
       this.start = !this.start;
       this.menu = !this.menu;
@@ -67,10 +93,15 @@ export default {
     toggleOptions() {
       this.options = !this.options;
       this.menu = !this.menu;
-      this.playSound(this.sounds.select);
+      if (this.effectsOn) {
+        this.playSound(this.sounds.select, 'effect');
+      }
     },
 
-    playSound(sound, loop) {
+    playSound(sound, type, loop) {
+      if ((!this.effectsOn && type === 'effect') || (!this.musicOn && type === 'music')) {
+        return;
+      }
       sound.file.play();
       sound.isPlaying = true;
       if (loop) {
@@ -84,7 +115,7 @@ export default {
     },
   },
   mounted() {
-    this.playSound(this.sounds.menu, true);
+    this.playSound(this.sounds.menu, 'music', true);
   },
 };
 </script>
@@ -249,5 +280,8 @@ body {
 #options h6 {
   color: #8c2022;
   font-size: 20px;
+}
+.checkboxes {
+  margin-top: 30px;
 }
 </style>
