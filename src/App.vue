@@ -73,7 +73,7 @@ export default {
           file: new Audio(require('./assets/Sounds/ambient/menu.mp3')),
         },
       },
-      musicOn: false,
+      musicOn: true,
       effectsOn: true,
     };
   },
