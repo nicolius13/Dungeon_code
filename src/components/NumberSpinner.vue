@@ -11,11 +11,13 @@ export default {
   props: ['value'],
   methods: {
     spinner(newVal) {
+      // check if value is between 5 and 15
       if (newVal > 15) {
         newVal = 15;
       } else if (newVal < 5) {
         newVal = 5;
       }
+      // emit a event 'input' that the v-model in 'App.vue' will catch
       this.$emit('input', newVal);
     },
   },

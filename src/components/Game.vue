@@ -66,13 +66,48 @@ export default {
     // MAP
     let map = [];
 
+    // SOUNDS
+    const sounds = {
+      fist: [
+        require('../assets/Sounds/fist/fist1_sound.mp3'),
+        require('../assets/Sounds/fist/fist2_sound.mp3'),
+        require('../assets/Sounds/fist/fist3_sound.mp3'),
+        require('../assets/Sounds/fist/fist4_sound.mp3'),
+      ],
+      weapons: [
+        require('../assets/Sounds/weapons/weapon1_sound.flac'),
+        require('../assets/Sounds/weapons/weapon2_sound.flac'),
+        require('../assets/Sounds/weapons/weapon3_sound.flac'),
+        require('../assets/Sounds/weapons/weapon4_sound.flac'),
+      ],
+      walk: [
+        require('../assets/Sounds/walk/1steps.mp3'),
+        require('../assets/Sounds/walk/2steps.mp3'),
+        require('../assets/Sounds/walk/3steps.mp3'),
+      ],
+    };
+
     // WEAPONS
     // to add weapon : key must be the same as the 'name' value and the name of the '.png'
     const weapons = {
-      fist: { name: 'fist', damage: 10, img: require('../assets/img/Weapons/fist.png') },
-      sword: { name: 'sword', damage: 25, position: [], img: require('../assets/img/Weapons/sword.png') },
+      fist: {
+        name: 'fist',
+        damage: 10,
+        img: require('../assets/img/Weapons/fist.png'),
+      },
+      sword: {
+        name: 'sword',
+        damage: 25,
+        position: [],
+        img: require('../assets/img/Weapons/sword.png'),
+      },
       hammer: { name: 'hammer', damage: 15, position: [], img: require('../assets/img/Weapons/hammer.png') },
-      axe: { name: 'axe', damage: 20, position: [], img: require('../assets/img/Weapons/axe.png') },
+      axe: {
+        name: 'axe',
+        damage: 20,
+        position: [],
+        img: require('../assets/img/Weapons/axe.png'),
+      },
       club: { name: 'club', damage: 12, position: [], img: require('../assets/img/Weapons/club.png') },
     };
     // PLAYERS
@@ -276,7 +311,7 @@ export default {
     }
     // highlight possible move tile expect if there is wall or player in the way
     function moveHighlight(element) {
-      element.each((_i, el) => {
+      element.each((i, el) => {
         // check if there is a wall if true => break the loop
         if ($(el).hasClass('wall')) {
           return false;
@@ -292,8 +327,10 @@ export default {
         ) {
           return false;
         }
-
-        $(el).addClass('movement');
+        //  add class 'movement' for highlight and data for walking sounds
+        $(el)
+          .addClass('movement')
+          .data('walk', i);
       });
     }
 
@@ -323,14 +360,18 @@ export default {
       moveHighlight(movRight);
       moveHighlight(movLeft);
     }
-
+    // remove the 'movement' class and the data(for the walking sounds)
     function removeMoveHighlight() {
       $('.movement')
         .off()
-        .removeClass('movement');
+        .removeClass('movement')
+        .removeData('walk');
     }
 
     function movePlayer(target, player) {
+      // play sound depending of the number of tile walked
+      playSounds('walk', $(target).data().walk);
+
       // remove player from his tile
       $(`.${player.name}`).remove();
       // move player to the clicked tile
@@ -401,6 +442,18 @@ export default {
     //          COMBAT
     //  /////////////////////////
 
+    // SOUNDS
+
+    function randomPicker(array) {
+      return Math.floor(Math.random() * array.length);
+    }
+
+    function playSounds(type, sound) {
+      let audio = new Audio();
+      audio.src = sounds[type][sound];
+      audio.play();
+    }
+
     // add the turn number and who's turn it is
     function turnLog(player, turn) {
       $('#menu ul').prepend(`<li class="${player.name}Turn">${player.coolName}'s turn</li>`);
@@ -437,11 +490,13 @@ export default {
       const damage = attack(attacker, defender);
       // reset the defence of the defender
       defender.defending = false;
-      // attack animation
+      // attack animation and sounds
       const attackerWeapon = attacker.weapon.name;
       if (attackerWeapon !== 'fist') {
+        playSounds('weapons', randomPicker(sounds.weapons));
         $(`.${attackerWeapon}`).addClass('animWeapon');
       } else {
+        playSounds('fist', randomPicker(sounds.fist));
         $(`.${attacker.name}`)
           .siblings('.weapons')
           .addClass('animFist');
