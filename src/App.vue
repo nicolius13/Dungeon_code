@@ -1,5 +1,9 @@
 <template>
   <div id="app">
+    <!-- <audio controls id="myVideo" autoplay loop hidden>
+      <source src="./assets/Sounds/ambient/ambient.mp3" type="audio/wav" />
+      Your browser does not support the audio element.
+    </audio> -->
     <div class="mainMenu" v-if="menu">
       <Title />
       <div class="menuSelect">
@@ -11,9 +15,9 @@
       <Title />
       <div class="menuSelect">
         <h6>map width :</h6>
-        <NumberSpinner v-model="mapX" />
+        <NumberSpinner v-model="mapX" :callSounds="playSound" />
         <h6>map height :</h6>
-        <NumberSpinner v-model="mapY" />
+        <NumberSpinner v-model="mapY" :callSounds="playSound" />
 
         <h2 class="mainLinks" @click="toggleOptions">Return</h2>
       </div>
@@ -41,17 +45,50 @@ export default {
       options: false,
       mapX: 10,
       mapY: 10,
+      sounds: {
+        select: {
+          isPlaying: false,
+          file: new Audio(require('./assets/Sounds/menu/select.wav')),
+        },
+        menu: {
+          isPlaying: false,
+          file: new Audio(require('./assets/Sounds/ambient/menu.mp3')),
+        },
+      },
     };
   },
   methods: {
     toggleGame() {
+      this.playSound(this.sounds.select);
+      if (this.sounds.menu.isPlaying === true) {
+        this.stopSound(this.sounds.menu);
+      } else {
+        this.playSound(this.sounds.menu, true);
+      }
       this.start = !this.start;
       this.menu = !this.menu;
     },
     toggleOptions() {
       this.options = !this.options;
       this.menu = !this.menu;
+      this.playSound(this.sounds.select);
     },
+
+    playSound(sound, loop) {
+      sound.file.play();
+      sound.isPlaying = true;
+      if (loop) {
+        sound.file.loop = true;
+      }
+    },
+    stopSound(sound) {
+      sound.file.pause();
+      sound.file.currentTime = 0;
+      sound.isPlaying = false;
+    },
+  },
+  mounted() {
+    this.playSound(this.sounds.menu, true);
   },
 };
 </script>

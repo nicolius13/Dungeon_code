@@ -8,9 +8,15 @@
 
 <script>
 export default {
-  props: ['value'],
+  props: ['value', 'callSounds'],
+  data() {
+    return {
+      sound: { file: new Audio(require('../assets/Sounds/menu/button.wav')) },
+    };
+  },
   methods: {
     spinner(newVal) {
+      this.callSounds(this.sound);
       // check if value is between 5 and 15
       if (newVal > 15) {
         newVal = 15;

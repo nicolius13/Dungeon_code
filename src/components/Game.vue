@@ -69,21 +69,27 @@ export default {
     // SOUNDS
     const sounds = {
       fist: [
-        require('../assets/Sounds/fist/fist1_sound.mp3'),
-        require('../assets/Sounds/fist/fist2_sound.mp3'),
-        require('../assets/Sounds/fist/fist3_sound.mp3'),
-        require('../assets/Sounds/fist/fist4_sound.mp3'),
+        new Audio(require('../assets/Sounds/fist/fist1_sound.mp3')),
+        new Audio(require('../assets/Sounds/fist/fist2_sound.mp3')),
+        new Audio(require('../assets/Sounds/fist/fist3_sound.mp3')),
+        new Audio(require('../assets/Sounds/fist/fist4_sound.mp3')),
       ],
       weapons: [
-        require('../assets/Sounds/weapons/weapon1_sound.flac'),
-        require('../assets/Sounds/weapons/weapon2_sound.flac'),
-        require('../assets/Sounds/weapons/weapon3_sound.flac'),
-        require('../assets/Sounds/weapons/weapon4_sound.flac'),
+        new Audio(require('../assets/Sounds/weapons/weapon1_sound.flac')),
+        new Audio(require('../assets/Sounds/weapons/weapon2_sound.flac')),
+        new Audio(require('../assets/Sounds/weapons/weapon3_sound.flac')),
+        new Audio(require('../assets/Sounds/weapons/weapon4_sound.flac')),
       ],
       walk: [
-        require('../assets/Sounds/walk/1steps.mp3'),
-        require('../assets/Sounds/walk/2steps.mp3'),
-        require('../assets/Sounds/walk/3steps.mp3'),
+        new Audio(require('../assets/Sounds/walk/1steps.mp3')),
+        new Audio(require('../assets/Sounds/walk/2steps.mp3')),
+        new Audio(require('../assets/Sounds/walk/3steps.mp3')),
+      ],
+      menu: [new Audio(require('../assets/Sounds/menu/select.wav'))],
+      ambients: [
+        new Audio(require('../assets/Sounds/ambient/ambient1.mp3')),
+        new Audio(require('../assets/Sounds/ambient/ambient2.mp3')),
+        new Audio(require('../assets/Sounds/ambient/ambient3.mp3')),
       ],
     };
 
@@ -448,12 +454,6 @@ export default {
       return Math.floor(Math.random() * array.length);
     }
 
-    function playSounds(type, sound) {
-      let audio = new Audio();
-      audio.src = sounds[type][sound];
-      audio.play();
-    }
-
     // add the turn number and who's turn it is
     function turnLog(player, turn) {
       $('#menu ul').prepend(`<li class="${player.name}Turn">${player.coolName}'s turn</li>`);
@@ -496,7 +496,10 @@ export default {
         playSounds('weapons', randomPicker(sounds.weapons));
         $(`.${attackerWeapon}`).addClass('animWeapon');
       } else {
-        playSounds('fist', randomPicker(sounds.fist));
+        const rand = randomPicker(sounds.fist);
+        console.log(rand);
+
+        playSounds('fist', rand);
         $(`.${attacker.name}`)
           .siblings('.weapons')
           .addClass('animFist');
@@ -589,6 +592,18 @@ export default {
     //          GENERAL
     //  /////////////////////////
 
+    function playSounds(type, soundIndex, loop) {
+      sounds[type][soundIndex].play();
+      // make the sound loop if needed
+      if (loop) {
+        sounds[type][soundIndex].loop = true;
+      }
+    }
+    function stopSounds(sound) {
+      sound.pause();
+      sound.currentTime = 0;
+    }
+
     function updateUILife(player) {
       $(`#${player.name}Life`).text(`${player.life}`);
     }
@@ -622,6 +637,9 @@ export default {
       $('.overlayText').addClass('animated bounceIn');
       // return to the menu ( emit a event that's catched by app.vue)
       $('.returnLink').click(() => {
+        sounds.ambients.forEach(sound => {
+          stopSounds(sound);
+        });
         self.$emit('exitGame');
       });
 
@@ -717,14 +735,17 @@ export default {
     }
 
     $(() => {
-      //  /////////////////////////
       //      EXIT BTN EVENT
-      //  /////////////////////////
-
       // return to the menu ( emit a event that's catched by app.vue)
       $('.returnLink').click(() => {
+        sounds.ambients.forEach(sound => {
+          stopSounds(sound);
+        });
         self.$emit('exitGame');
       });
+
+      // ambient music
+      playSounds('ambients', randomPicker(sounds.ambients), true);
 
       // Generate the map (x tiles by y tiles)
       generateMap(mapWidth, mapHeight);
