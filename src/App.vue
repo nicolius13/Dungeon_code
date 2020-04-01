@@ -1,27 +1,19 @@
 <template>
   <div id="app">
     <div class="mainMenu" v-if="menu">
-      <img class="title" src=".\assets\img\Title\title.gif" alt="Dungeon" />
+      <Title />
       <div class="menuSelect">
         <h2 class="mainLinks" @click="toggleGame">New Game</h2>
         <h2 class="mainLinks" @click="toggleOptions">Options</h2>
       </div>
     </div>
     <div id="options" class="mainMenu" v-if="options">
-      <img class="title" src="./assets/img/Title/title.gif" alt="Dungeon" />
+      <Title />
       <div class="menuSelect">
         <h6>map width :</h6>
-        <div class="number-spinner">
-          <button @click="spinner" class="btn spinnerBtn minus" data="dwnX">-</button>
-          <input class="spinner" v-model="mapX" @input="onlyNumbers('mapX')" @blur="numberLimits('mapX')" type="text" />
-          <button @click="spinner" class="btn spinnerBtn plus" data="upX">+</button>
-        </div>
+        <NumberSpinner v-model="mapX" />
         <h6>map height :</h6>
-        <div class="number-spinner">
-          <button @click="spinner" class="btn spinnerBtn minus" data="dwnY">-</button>
-          <input class="spinner" v-model="mapY" @input="onlyNumbers('mapY')" @blur="numberLimits('mapY')" type="text" />
-          <button @click="spinner" class="btn spinnerBtn plus" data="upY">+</button>
-        </div>
+        <NumberSpinner v-model="mapY" />
 
         <h2 class="mainLinks" @click="toggleOptions">Return</h2>
       </div>
@@ -32,11 +24,15 @@
 
 <script>
 import Game from './components/Game.vue';
+import NumberSpinner from './components/NumberSpinner';
+import Title from './components/Title';
 
 export default {
   name: 'App',
   components: {
     Game,
+    NumberSpinner,
+    Title,
   },
   data() {
     return {
@@ -55,48 +51,6 @@ export default {
     toggleOptions() {
       this.options = !this.options;
       this.menu = !this.menu;
-    },
-    // OPTIONS
-    spinner(event) {
-      switch (event.target.attributes.data.nodeValue) {
-        case 'upX':
-          this.mapX++;
-          if (this.mapX > 15) {
-            this.mapX = 15;
-          }
-          break;
-        case 'dwnX':
-          this.mapX--;
-          if (this.mapX < 5) {
-            this.mapX = 5;
-          }
-          break;
-        case 'upY':
-          this.mapY++;
-          if (this.mapY > 15) {
-            this.mapY = 15;
-          }
-          break;
-        case 'dwnY':
-          this.mapY--;
-          if (this.mapY < 5) {
-            this.mapY = 5;
-          }
-          break;
-      }
-    },
-    // only numbers are possible so remplace anyting else by an empty string.
-    // transform the result into an integer
-    onlyNumbers(type) {
-      this[type] = parseInt(this[type].replace(/[^0-9]/g, ''));
-    },
-    // limit the numbers from 5 to 15
-    numberLimits(type) {
-      if (this[type] < 5) {
-        this[type] = 5;
-      } else if (this[type] > 15) {
-        this[type] = 15;
-      }
     },
   },
 };
@@ -181,6 +135,12 @@ body {
   border-left: 6px black solid;
   border-right: 6px black solid;
 }
+.btn::-moz-focus-inner {
+  border: 0;
+}
+.btn:focus {
+  outline: none;
+}
 /* Attack/minus Btn */
 #attackBtn,
 #attackBtn.disabled:hover,
@@ -234,11 +194,6 @@ body {
   background-color: rgb(37, 37, 37);
 }
 
-.title {
-  width: 640px;
-  margin-top: 50px;
-}
-
 .menuSelect {
   height: 100%;
   display: flex;
@@ -249,8 +204,6 @@ body {
 
 .mainLinks {
   font-size: 45px;
-  /* justify-self: center; */
-  /* align-self: center; */
   color: #8c2022;
   transition: all 0.4s ease-in-out;
 }
@@ -263,21 +216,5 @@ body {
 #options h6 {
   color: #8c2022;
   font-size: 20px;
-}
-
-.spinner {
-  text-align: center;
-  background-color: inherit;
-  color: rgb(255, 248, 192);
-  font-family: inherit;
-  width: 100px;
-  padding: 20px 0;
-  border-style: solid;
-  border-width: 5px;
-  border-image-slice: 3;
-  border-image-width: 3;
-  border-image-repeat: stretch;
-  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(255,255,255)" /></svg>');
-  border-image-outset: 0;
 }
 </style>

@@ -938,55 +938,7 @@ export default {
 }
 
 .animWeapon {
-  -webkit-animation: weaponAnime 0.3s ease-in-out;
-  -moz-animation: weaponAnime 0.3s ease-in-out;
-  -ms-animation: weaponAnime 0.3s ease-in-out;
-  -o-animation: weaponAnime 0.3s ease-in-out;
   animation: weaponAnime 0.3s ease-in-out;
-}
-@-webkit-keyframes play {
-  0% {
-    -webkit-transform: rotate(0deg);
-  }
-  50% {
-    -webkit-transform: rotate(90deg);
-  }
-  100% {
-    -webkit-transform: rotate(0deg);
-  }
-}
-@-moz-keyframes play {
-  0% {
-    -moz-transform: rotate(0deg);
-  }
-  50% {
-    -moz-transform: rotate(90deg);
-  }
-  100% {
-    -moz-transform: rotate(0deg);
-  }
-}
-@-ms-keyframes play {
-  0% {
-    -ms-transform: rotate(0deg);
-  }
-  50% {
-    -ms-transform: rotate(90deg);
-  }
-  100% {
-    -ms-transform: rotate(0deg);
-  }
-}
-@-o-keyframes play {
-  0% {
-    -o-transform: rotate(0deg);
-  }
-  50% {
-    -o-transform: rotate(90deg);
-  }
-  100% {
-    -o-transform: rotate(0deg);
-  }
 }
 @keyframes weaponAnime {
   0% {
@@ -1004,56 +956,9 @@ export default {
   background-position: bottom;
 }
 .animFist {
-  -webkit-animation: fistAnime 0.3s ease-in-out;
-  -moz-animation: fistAnime 0.3s ease-in-out;
-  -ms-animation: fistAnime 0.3s ease-in-out;
-  -o-animation: fistAnime 0.3s ease-in-out;
   animation: fistAnime 0.3s ease-in-out;
 }
-@-webkit-keyframes play {
-  0% {
-    -webkit-transform: translateX(0);
-  }
-  50% {
-    -webkit-transform: translateX(10px);
-  }
-  100% {
-    -webkit-transform: translateX(0);
-  }
-}
-@-moz-keyframes play {
-  0% {
-    -moz-transform: translateX(0);
-  }
-  50% {
-    -moz-transform: translateX(10px);
-  }
-  100% {
-    -moz-transform: translateX(0);
-  }
-}
-@-ms-keyframes play {
-  0% {
-    -ms-transform: translateX(0);
-  }
-  50% {
-    -ms-transform: translateX(10px);
-  }
-  100% {
-    -ms-transform: translateX(0);
-  }
-}
-@-o-keyframes play {
-  0% {
-    -o-transform: translateX(0);
-  }
-  50% {
-    -o-transform: translateX(10px);
-  }
-  100% {
-    -o-transform: translateX(0);
-  }
-}
+
 @keyframes fistAnime {
   0% {
     transform: translateX(0);
@@ -1085,43 +990,8 @@ export default {
 .player1,
 .player2 {
   background-size: cover;
-  -webkit-animation: play 0.8s steps(4) infinite;
-  -moz-animation: play 0.8s steps(4) infinite;
-  -ms-animation: play 0.8s steps(4) infinite;
-  -o-animation: play 0.8s steps(4) infinite;
+
   animation: play 0.8s steps(4) infinite;
-}
-@-webkit-keyframes play {
-  0% {
-    background-position: 0px;
-  }
-  100% {
-    background-position: -134px;
-  }
-}
-@-moz-keyframes play {
-  0% {
-    background-position: 0px;
-  }
-  100% {
-    background-position: -134px;
-  }
-}
-@-ms-keyframes play {
-  0% {
-    background-position: 0px;
-  }
-  100% {
-    background-position: -134px;
-  }
-}
-@-o-keyframes play {
-  0% {
-    background-position: 0px;
-  }
-  100% {
-    background-position: -134px;
-  }
 }
 @keyframes play {
   0% {
