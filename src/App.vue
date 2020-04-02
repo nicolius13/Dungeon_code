@@ -139,7 +139,7 @@ export default {
 
 body {
   margin: 0;
-  height: 100vh;
+  min-height: 100vh;
   background-color: rgb(66, 66, 66);
   font-family: gameOver, cursive;
   color: rgb(255, 248, 192);
@@ -149,7 +149,7 @@ body {
 #app {
   display: flex;
   justify-content: center;
-  height: 100%;
+  min-height: 100vh;
 }
 
 /*  /////////////////////// 
@@ -249,7 +249,7 @@ body {
 ////////////////////// */
 
 .mainMenu {
-  height: 100%;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
