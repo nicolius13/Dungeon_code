@@ -10,10 +10,11 @@ export default {
   props: ['type', 'value', 'btnSound', 'music', 'callSounds', 'stopMusic'],
   methods: {
     change() {
+      // emit a event 'input' that the v-model in 'App.vue' will catch
       this.$emit('input', !this.value);
 
       this.callSounds(this.btnSound, 'effect');
-      // check the changed value so if the value is false => start music else stop it
+      // check the value so if the value is false => start music else stop it
       if (this.type === 'Music' && this.value === false) {
         this.callSounds(this.music, 'music', true);
       } else if (this.type === 'Music' && this.value === true) {

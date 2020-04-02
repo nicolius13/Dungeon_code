@@ -21,7 +21,7 @@
           :callSounds="playSound"
           :stopMusic="stopSound"
           :btnSound="sounds.button"
-          :music="sounds.menu"
+          :music="sounds.menuMusic"
         />
         <CheckBoxe
           class="checkboxes"
@@ -68,7 +68,7 @@ export default {
           isPlaying: false,
           file: new Audio(require('./assets/Sounds/menu/button.wav')),
         },
-        menu: {
+        menuMusic: {
           isPlaying: false,
           file: new Audio(require('./assets/Sounds/ambient/menu.mp3')),
         },
@@ -79,43 +79,49 @@ export default {
   },
   methods: {
     toggleGame() {
+      // btn sound
       this.playSound(this.sounds.select, 'effect');
 
       // toggle the menu music on/off
-      if (this.sounds.menu.isPlaying === true) {
-        this.stopSound(this.sounds.menu);
+      if (this.sounds.menuMusic.isPlaying === true) {
+        this.stopSound(this.sounds.menuMusic);
       } else {
-        this.playSound(this.sounds.menu, 'music', true);
+        this.playSound(this.sounds.menuMusic, 'music', true);
       }
+      // toggle the game and main menu
       this.start = !this.start;
       this.menu = !this.menu;
     },
     toggleOptions() {
+      // btn sound
+      this.playSound(this.sounds.select, 'effect');
+      // toggle the option menu and main menu
       this.options = !this.options;
       this.menu = !this.menu;
-      if (this.effectsOn) {
-        this.playSound(this.sounds.select, 'effect');
-      }
     },
 
     playSound(sound, type, loop) {
+      // check if effect or music is on for the respective type if it's off don't play the sound
       if ((!this.effectsOn && type === 'effect') || (!this.musicOn && type === 'music')) {
         return;
       }
       sound.file.play();
       sound.isPlaying = true;
+      // make the sound loop if needed
       if (loop) {
         sound.file.loop = true;
       }
     },
+    // make the sound stop and ready to start from the begining
     stopSound(sound) {
       sound.file.pause();
       sound.file.currentTime = 0;
       sound.isPlaying = false;
     },
   },
+  // start the music as soon as the app is mounted
   mounted() {
-    this.playSound(this.sounds.menu, 'music', true);
+    this.playSound(this.sounds.menuMusic, 'music', true);
   },
 };
 </script>
