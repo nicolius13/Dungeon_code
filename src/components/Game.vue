@@ -31,8 +31,25 @@
       <div class="combatLog">
         <ul></ul>
       </div>
-      <div class="exitLink">
-        <a class="returnLink exit">Exit Game</a>
+      <div class="menuLinks">
+        <a class="links showModal">Rules</a>
+        <a class="returnLink links">Exit Game</a>
+      </div>
+    </div>
+    <div class="modal">
+      <div class="modalContent character">
+        <h3>Rules</h3>
+        <span class="links close">X</span>
+        <p class="rules">+ You can move up to 3 tiles per turn</p>
+        <p class="rules">+ Stop on a tile containing a weapon to grab it</p>
+        <p class="rules">+ A combat to the death start when you are in a tile next to the other hero</p>
+        <p class="rules">+ Weapons damages :</p>
+        <div class="weaponWrapper">
+          <div class="weaponRule"><img src="../assets/img/Weapons/club.png" alt="Club" /><span>: 15</span></div>
+          <div class="weaponRule"><img src="../assets/img/Weapons/hammer.png" alt="Hammer" /><span>: 20</span></div>
+          <div class="weaponRule"><img src="../assets/img/Weapons/axe.png" alt="Axe" /><span>: 20</span></div>
+          <div class="weaponRule"><img src="../assets/img/Weapons/sword.png" alt="Sword" /><span>: 25</span></div>
+        </div>
       </div>
     </div>
   </div>
@@ -59,10 +76,10 @@ export default {
       type: Boolean,
     },
   },
-  mounted: function() {
-    //  /////////////////////////
-    //     OBJECTS AND ARRAYS
-    //  /////////////////////////
+  mounted: function () {
+    //  ///////////////////////////////////
+    //    VARIABLES, OBJECTS AND ARRAYS
+    //  /////////////////////////////////
 
     // VARIABLES
     const tilePercentage = 80;
@@ -128,14 +145,14 @@ export default {
         position: [],
         img: require('../assets/img/Weapons/sword.png'),
       },
-      hammer: { name: 'hammer', damage: 15, position: [], img: require('../assets/img/Weapons/hammer.png') },
+      hammer: { name: 'hammer', damage: 20, position: [], img: require('../assets/img/Weapons/hammer.png') },
       axe: {
         name: 'axe',
         damage: 20,
         position: [],
         img: require('../assets/img/Weapons/axe.png'),
       },
-      club: { name: 'club', damage: 12, position: [], img: require('../assets/img/Weapons/club.png') },
+      club: { name: 'club', damage: 15, position: [], img: require('../assets/img/Weapons/club.png') },
     };
 
     // PLAYERS
@@ -272,7 +289,7 @@ export default {
       // WEAPONS
       // create an array of the keys of the weapons obj to loop through
       const weaponsArray = Object.keys(weapons);
-      weaponsArray.forEach(weapon => {
+      weaponsArray.forEach((weapon) => {
         // choose position of weapon and put it in the map array the weapons obj except 'fist'
         if (weapon !== 'fist') {
           placeObj(weapons[weapon], x, y);
@@ -313,11 +330,7 @@ export default {
     function verticalMove(element, player) {
       let move = $();
       // select the column of the player by looking at the 'y' propety
-      const col = parseInt(
-        $(`.${player.name}`)
-          .parent()
-          .attr('y')
-      );
+      const col = parseInt($(`.${player.name}`).parent().attr('y'));
       // add the tile of the column 'col' to 'move' and return move
       element.each((_i, el) => {
         move = move.add($(el).children(`:nth-child(${col + 1})`));
@@ -333,20 +346,11 @@ export default {
           return false;
         }
         // check if the other player is in the way if true => break the loop
-        if (
-          $(el)
-            .children()
-            .hasClass('player2') ||
-          $(el)
-            .children()
-            .hasClass('player1')
-        ) {
+        if ($(el).children().hasClass('player2') || $(el).children().hasClass('player1')) {
           return false;
         }
         //  add class 'movement' for highlight and data for walking sounds
-        $(el)
-          .addClass('movement')
-          .data('walk', i);
+        $(el).addClass('movement').data('walk', i);
       });
     }
 
@@ -359,11 +363,7 @@ export default {
 
       // select the 3 tile in the player column from the rows passed in argument
       // reverse the jquery object because the result of .add() return in doc order
-      let movTop = $(
-        verticalMove(topRow, player)
-          .get()
-          .reverse()
-      );
+      let movTop = $(verticalMove(topRow, player).get().reverse());
       // move down
       // same as move up without the reversing
       const bottomRow = playerTile.parent().nextAll(':lt(3)');
@@ -382,10 +382,7 @@ export default {
     }
     // remove the 'movement' class and the data(for the walking sounds)
     function removeMoveHighlight() {
-      $('.movement')
-        .off()
-        .removeClass('movement')
-        .removeData('walk');
+      $('.movement').off().removeClass('movement').removeData('walk');
     }
 
     function movePlayer(target, player) {
@@ -410,9 +407,7 @@ export default {
 
     // place the weapon where the player is
     function addWeapon(player, weapon) {
-      $(`.${player.name}`)
-        .parent()
-        .append(`<div class="${weapon} weapons"></div>`);
+      $(`.${player.name}`).parent().append(`<div class="${weapon} weapons"></div>`);
       $(`.${weapon}`).css('backgroundImage', `url(${weapons[weapon].img})`);
     }
 
@@ -434,7 +429,7 @@ export default {
       let newWeapon;
       //  create a array of the values of the 'weapons' object to loop trough
       const weaponsArray = Object.values(weapons);
-      weaponsArray.forEach(weapon => {
+      weaponsArray.forEach((weapon) => {
         if (weapon.name !== 'fist') {
           if (posX === weapon.position[0] && posY === weapon.position[1]) {
             newWeapon = weapon;
@@ -513,9 +508,7 @@ export default {
       } else {
         // if the weapon is a fist plays a random 'fist' sound and an animation
         playSounds('fist', randomPicker(sounds.fist.length));
-        $(`.${attacker.name}`)
-          .siblings('.weapons')
-          .addClass('animFist');
+        $(`.${attacker.name}`).siblings('.weapons').addClass('animFist');
       }
       // reset the defence of the defender
       defender.defending = false;
@@ -662,18 +655,16 @@ export default {
     function win(winner) {
       playSounds('victory', 0);
       // disable the attack/defend buttons and remove the click event
-      $('.btn')
-        .addClass('disabled')
-        .off();
+      $('.btn').addClass('disabled').off();
       // show the game over message
       $('#board').addClass('overlay').append(`
         <h1 class="overlayText winner win${winner.name}">${winner.coolName} won !</h1>
-        <h2 class="overlayText returnLink">Return</h2>
+        <h2 class="overlayText links returnLink">Return</h2>
         `);
       $('.overlayText').addClass('animated bounceIn');
       // return to the menu ( emit a event that's catched by app.vue)
       $('.returnLink').click(() => {
-        sounds.ambients.forEach(sound => {
+        sounds.ambients.forEach((sound) => {
           stopSounds(sound);
         });
         self.$emit('exitGame');
@@ -699,11 +690,7 @@ export default {
     }
     // update the position of an object by getting the 'x' and 'y' attributes
     function updatePosition(obj, target) {
-      const positionX = parseInt(
-        $(target)
-          .parent()
-          .attr('x')
-      );
+      const positionX = parseInt($(target).parent().attr('x'));
       obj.position[0] = positionX;
       const positionY = parseInt($(target).attr('y'));
       obj.position[1] = positionY;
@@ -752,7 +739,7 @@ export default {
         // display movement for player
         displayMove(player);
         //add click event listener on every movement tile
-        $('.movement').click(el => {
+        $('.movement').click((el) => {
           // move the player where the click happened
           movePlayer(el.target, player);
           // check if there is a weapon
@@ -774,10 +761,29 @@ export default {
       // return to the menu ( emit a event that's catched by app.vue)
       $('.returnLink').click(() => {
         // stop the music
-        sounds.ambients.forEach(sound => {
+        sounds.ambients.forEach((sound) => {
           stopSounds(sound);
         });
         self.$emit('exitGame');
+      });
+      //     RULES BTN EVENT
+      // display the rules modal on click
+      $('.showModal').click(() => {
+        $('.modal').css('display', 'block');
+        // add event to close the modal if cliked outside of it
+        $(window).click((e) => {
+          if (e.target == $('.modal')[0]) {
+            $('.modal').css('display', 'none');
+            // remove the click event of the window
+            $(window).off();
+          }
+        });
+      });
+      // close the rule modal if clicked on the X
+      $('.close').click(() => {
+        $('.modal').css('display', 'none');
+        // remove the click event of the window
+        $(window).off();
       });
 
       // start ambient music
@@ -891,14 +897,85 @@ export default {
   background-color: rgb(231, 53, 53);
 }
 /* exit link */
-.exitLink {
+.menuLinks {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
   margin-top: 30px;
-  text-align: center;
 }
-.exit {
+.menuLinks .returnLink.links {
+  margin-top: 10px;
+}
+.links {
   text-align: center;
   color: rgb(216, 0, 0);
+  font-size: 20px;
+  transition: all 0.3s ease-in-out;
 }
+.links:hover {
+  color: #9b1315;
+  transition: all 0.3s ease-in-out;
+}
+.returnLink.links {
+  font-size: 26px;
+}
+
+/* MODAL */
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 99;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+.modalContent {
+  background-color: rgb(66, 66, 66);
+  margin: 15% auto;
+  padding: 20px;
+  max-width: 50%;
+  width: 50%;
+}
+.modalContent h3 {
+  background-color: rgb(66, 66, 66);
+  margin: -2.6rem auto 1rem;
+}
+.rules {
+  line-height: 1.5rem;
+  font-size: 14px;
+}
+
+.close {
+  margin-top: -40px;
+  margin-right: -8px;
+  float: right;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.weaponWrapper {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+.weaponRule {
+  display: flex;
+  padding: 0 10px;
+}
+.weaponRule img {
+  width: 15px;
+}
+.weaponRule span {
+  padding-left: 5px;
+  display: flex;
+  align-self: center;
+}
+
 /*  /////////////////////// 
         ANNOUNCEMENT
     ////////////////////// */
@@ -951,16 +1028,10 @@ export default {
   color: rgb(43, 159, 226);
 }
 
-.returnLink {
-  font-size: 20px;
+.overlayText.returnLink {
   width: 400px;
   top: 60%;
   left: Calc(50% - 200px);
-  transition: all 0.3s ease-in-out;
-}
-.returnLink:hover {
-  color: #9b1315;
-  transition: all 0.3s ease-in-out;
 }
 
 /*  /////////////////////// 
