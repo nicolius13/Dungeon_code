@@ -76,7 +76,7 @@ export default {
       type: Boolean,
     },
   },
-  mounted: function () {
+  mounted: function() {
     //  ///////////////////////////////////
     //    VARIABLES, OBJECTS AND ARRAYS
     //  /////////////////////////////////
@@ -121,7 +121,10 @@ export default {
         new Audio(require('../assets/Sounds/walk/2steps.mp3')),
         new Audio(require('../assets/Sounds/walk/3steps.mp3')),
       ],
-      menu: [new Audio(require('../assets/Sounds/menu/select.wav'))],
+      menu: [
+        new Audio(require('../assets/Sounds/menu/select.wav')),
+        new Audio(require('../assets/Sounds/menu/button.wav')),
+      ],
       victory: [new Audio(require('../assets/Sounds/victory.mp3'))],
       combat: [new Audio(require('../assets/Sounds/fight.mp3'))],
       ambients: [
@@ -330,7 +333,11 @@ export default {
     function verticalMove(element, player) {
       let move = $();
       // select the column of the player by looking at the 'y' propety
-      const col = parseInt($(`.${player.name}`).parent().attr('y'));
+      const col = parseInt(
+        $(`.${player.name}`)
+          .parent()
+          .attr('y')
+      );
       // add the tile of the column 'col' to 'move' and return move
       element.each((_i, el) => {
         move = move.add($(el).children(`:nth-child(${col + 1})`));
@@ -346,11 +353,20 @@ export default {
           return false;
         }
         // check if the other player is in the way if true => break the loop
-        if ($(el).children().hasClass('player2') || $(el).children().hasClass('player1')) {
+        if (
+          $(el)
+            .children()
+            .hasClass('player2') ||
+          $(el)
+            .children()
+            .hasClass('player1')
+        ) {
           return false;
         }
         //  add class 'movement' for highlight and data for walking sounds
-        $(el).addClass('movement').data('walk', i);
+        $(el)
+          .addClass('movement')
+          .data('walk', i);
       });
     }
 
@@ -363,7 +379,11 @@ export default {
 
       // select the 3 tile in the player column from the rows passed in argument
       // reverse the jquery object because the result of .add() return in doc order
-      let movTop = $(verticalMove(topRow, player).get().reverse());
+      let movTop = $(
+        verticalMove(topRow, player)
+          .get()
+          .reverse()
+      );
       // move down
       // same as move up without the reversing
       const bottomRow = playerTile.parent().nextAll(':lt(3)');
@@ -382,7 +402,10 @@ export default {
     }
     // remove the 'movement' class and the data(for the walking sounds)
     function removeMoveHighlight() {
-      $('.movement').off().removeClass('movement').removeData('walk');
+      $('.movement')
+        .off()
+        .removeClass('movement')
+        .removeData('walk');
     }
 
     function movePlayer(target, player) {
@@ -407,7 +430,9 @@ export default {
 
     // place the weapon where the player is
     function addWeapon(player, weapon) {
-      $(`.${player.name}`).parent().append(`<div class="${weapon} weapons"></div>`);
+      $(`.${player.name}`)
+        .parent()
+        .append(`<div class="${weapon} weapons"></div>`);
       $(`.${weapon}`).css('backgroundImage', `url(${weapons[weapon].img})`);
     }
 
@@ -508,7 +533,9 @@ export default {
       } else {
         // if the weapon is a fist plays a random 'fist' sound and an animation
         playSounds('fist', randomPicker(sounds.fist.length));
-        $(`.${attacker.name}`).siblings('.weapons').addClass('animFist');
+        $(`.${attacker.name}`)
+          .siblings('.weapons')
+          .addClass('animFist');
       }
       // reset the defence of the defender
       defender.defending = false;
@@ -655,7 +682,9 @@ export default {
     function win(winner) {
       playSounds('victory', 0);
       // disable the attack/defend buttons and remove the click event
-      $('.btn').addClass('disabled').off();
+      $('.btn')
+        .addClass('disabled')
+        .off();
       // show the game over message
       $('#board').addClass('overlay').append(`
         <h1 class="overlayText winner win${winner.name}">${winner.coolName} won !</h1>
@@ -690,7 +719,11 @@ export default {
     }
     // update the position of an object by getting the 'x' and 'y' attributes
     function updatePosition(obj, target) {
-      const positionX = parseInt($(target).parent().attr('x'));
+      const positionX = parseInt(
+        $(target)
+          .parent()
+          .attr('x')
+      );
       obj.position[0] = positionX;
       const positionY = parseInt($(target).attr('y'));
       obj.position[1] = positionY;
@@ -769,10 +802,13 @@ export default {
       //     RULES BTN EVENT
       // display the rules modal on click
       $('.showModal').click(() => {
+        playSounds('menu', 0);
+
         $('.modal').css('display', 'block');
         // add event to close the modal if cliked outside of it
         $(window).click((e) => {
           if (e.target == $('.modal')[0]) {
+            playSounds('menu', 1);
             $('.modal').css('display', 'none');
             // remove the click event of the window
             $(window).off();
@@ -781,6 +817,7 @@ export default {
       });
       // close the rule modal if clicked on the X
       $('.close').click(() => {
+        playSounds('menu', 1);
         $('.modal').css('display', 'none');
         // remove the click event of the window
         $(window).off();
