@@ -65,22 +65,22 @@ export default {
   props: {
     mapX: {
       type: Number,
-      default: 10,
+      default: 10
     },
     mapY: {
       type: Number,
-      default: 10,
+      default: 10
     },
     musicOn: {
-      type: Boolean,
+      type: Boolean
     },
     effectsOn: {
-      type: Boolean,
-    },
+      type: Boolean
+    }
   },
   mounted: function() {
-    //  ///////////////////////////////////
-    //    VARIABLES, OBJECTS AND ARRAYS
+    //  //////////////////////////////////
+    //             VARIABLES
     //  /////////////////////////////////
 
     // VARIABLES
@@ -94,762 +94,783 @@ export default {
     const musicOn = this.musicOn;
     const effectsOn = this.effectsOn;
 
-    // MAP
-    let map = [];
+    //  //////////////////////////////////
+    //                SOUNDS
+    //  //////////////////////////////////
 
-    // SOUNDS
     const sounds = {
       fist: [
         new Audio(require('../assets/Sounds/fist/fist1_sound.mp3')),
         new Audio(require('../assets/Sounds/fist/fist2_sound.mp3')),
         new Audio(require('../assets/Sounds/fist/fist3_sound.mp3')),
-        new Audio(require('../assets/Sounds/fist/fist4_sound.mp3')),
+        new Audio(require('../assets/Sounds/fist/fist4_sound.mp3'))
       ],
       weapons: [
         new Audio(require('../assets/Sounds/weapons/weapon1_sound.flac')),
         new Audio(require('../assets/Sounds/weapons/weapon2_sound.flac')),
         new Audio(require('../assets/Sounds/weapons/weapon3_sound.flac')),
-        new Audio(require('../assets/Sounds/weapons/weapon4_sound.flac')),
+        new Audio(require('../assets/Sounds/weapons/weapon4_sound.flac'))
       ],
       blocked: [
         new Audio(require('../assets/Sounds/weapons/block_blade1.wav')),
         new Audio(require('../assets/Sounds/weapons/block_blade2.wav')),
         new Audio(require('../assets/Sounds/weapons/block_blunt1.wav')),
-        new Audio(require('../assets/Sounds/weapons/block_blunt2.wav')),
+        new Audio(require('../assets/Sounds/weapons/block_blunt2.wav'))
       ],
       shield: [new Audio(require('../assets/Sounds/defend/shield.wav'))],
       walk: [
         new Audio(require('../assets/Sounds/walk/1steps.mp3')),
         new Audio(require('../assets/Sounds/walk/2steps.mp3')),
-        new Audio(require('../assets/Sounds/walk/3steps.mp3')),
+        new Audio(require('../assets/Sounds/walk/3steps.mp3'))
       ],
       menu: [
         new Audio(require('../assets/Sounds/menu/select.wav')),
-        new Audio(require('../assets/Sounds/menu/button.wav')),
+        new Audio(require('../assets/Sounds/menu/button.wav'))
       ],
       victory: [new Audio(require('../assets/Sounds/victory.mp3'))],
       combat: [new Audio(require('../assets/Sounds/fight.mp3'))],
       ambients: [
         new Audio(require('../assets/Sounds/ambient/ambient1.mp3')),
         new Audio(require('../assets/Sounds/ambient/ambient2.mp3')),
-        new Audio(require('../assets/Sounds/ambient/ambient3.mp3')),
+        new Audio(require('../assets/Sounds/ambient/ambient3.mp3'))
       ],
-    };
-
-    // WEAPONS
-    // to add weapon : key must be the same as the 'name' value and the name of the '.png'
-    const weapons = {
-      fist: {
-        name: 'fist',
-        damage: 10,
-        img: require('../assets/img/Weapons/fist.png'),
+      playSounds: function(type, soundIndex, loop) {
+        // check if musics or effects are on if not don't play them(return)
+        if (type === 'ambients' && !musicOn) {
+          return;
+        } else if (type !== 'ambients' && !effectsOn) {
+          return;
+        }
+        // reset the current time of the sound to 0 and play it
+        sounds[type][soundIndex].currentTime = 0;
+        sounds[type][soundIndex].play();
+        // make the sound loop if needed
+        if (loop) {
+          sounds[type][soundIndex].loop = true;
+        }
       },
-      sword: {
-        name: 'sword',
-        damage: 25,
-        position: [],
-        img: require('../assets/img/Weapons/sword.png'),
-      },
-      hammer: {
-        name: 'hammer',
-        damage: 20,
-        position: [],
-        img: require('../assets/img/Weapons/hammer.png'),
-      },
-      axe: {
-        name: 'axe',
-        damage: 20,
-        position: [],
-        img: require('../assets/img/Weapons/axe.png'),
-      },
-      club: {
-        name: 'club',
-        damage: 15,
-        position: [],
-        img: require('../assets/img/Weapons/club.png'),
-      },
-    };
-
-    // PLAYERS
-    let player1 = {
-      name: 'player1',
-      coolName: 'Knight',
-      life: 100,
-      weapon: { name: weapons.fist.name, damage: weapons.fist.damage },
-      defending: false,
-      position: [],
-      img: require('../assets/img/Players/knight_idle-sprit.png'),
-      cursorImg: require('../assets/img/Cursor/cursor_player1.png'),
-    };
-    let player2 = {
-      name: 'player2',
-      coolName: 'Mage',
-      life: 100,
-      weapon: { name: weapons.fist.name, damage: weapons.fist.damage },
-      defending: false,
-      position: [],
-      img: require('../assets/img/Players/mage_idle-sprit.png'),
-      cursorImg: require('../assets/img/Cursor/cursor_player2.png'),
-    };
-
-    //  /////////////////////////
-    //      MAP GENERATION
-    //  /////////////////////////
-
-    function pushTile(index, className) {
-      map[index].push({ tileType: className });
-    }
-    // chose if a tile is a wall or not
-    function chooseTile() {
-      const rdm = randomPicker(100);
-      // % of tile are normale floor
-      if (rdm > tilePercentage) {
-        return 'wall';
-      } else {
-        return 'floor';
+      stopSounds: function(sound) {
+        sound.pause();
+        sound.currentTime = 0;
       }
-    }
-    // choose the position of a object in the map grid
-    function chooseCoordObj(x, y) {
-      let coordX, coordY, position;
-      do {
-        coordX = randomPicker(x);
-        coordY = randomPicker(y);
-        position = map[coordX][coordY];
-        // test if the chosen tile is a floor (not a wall) and don't have another object yet
-      } while (position.tileType !== 'floor' || 'obj' in position);
+    };
 
-      return [coordX, coordY];
-    }
+    //  //////////////////////////////////
+    //                MAP
+    //  //////////////////////////////////
 
-    // choose the place of an object and place it in the map array
-    function placeObj(obj, x, y) {
-      obj.position = chooseCoordObj(x, y);
-      map[obj.position[0]][obj.position[1]].obj = obj.name;
-    }
+    const map = {
+      mapArr: [],
 
-    // randomly choose style of the floors tiles
-    function floorStyling() {
-      const rand = randomPicker(100);
-      if (rand < 5) {
-        return require('../assets/img/Map/Floors/floor_2.png');
-      } else if (rand >= 5 && rand < 15) {
-        return require('../assets/img/Map/Floors/floor_3.png');
-      } else if (rand >= 15 && rand < 18) {
-        return require('../assets/img/Map/Floors/floor_4.png');
-      } else if (rand >= 18 && rand < 28) {
-        return require('../assets/img/Map/Floors/floor_5.png');
-      } else {
-        return require('../assets/img/Map/Floors/floor_1.png');
-      }
-    }
-    // render tiles and objects from the map array
-    function renderTile() {
-      for (let i = 0; i < map.length; i++) {
-        // put a x prop to easily know where we are in game
-        $('#board').append(`<div class="mapRow" x=${i}></div>`);
-        for (let j = 0; j < map[i].length; j++) {
-          const loc = map[i][j];
-          // put a y prop to easily know where we are in game
-          $('.mapRow:last').append(`<div class=" tile ${loc.tileType}" y=${j}></div>`);
-          if (loc.tileType === 'floor') {
-            $('.floor:last').css('backgroundImage', `url(${floorStyling()})`);
-          }
-          // add the object if it exist
-          if ('obj' in loc) {
-            const obj = loc.obj;
-            if (obj === 'player1' || obj === 'player2') {
-              $('.floor:last').append(`<div class="${obj} player"></div>`);
-            } else {
-              $('.floor:last').append(`<div class="${obj} weapons"></div>`);
-              $('.weapons:last').css('backgroundImage', `url(${weapons[obj].img})`);
+      pushTile: function(index, className) {
+        this.mapArr[index].push({ tileType: className });
+      },
+      // chose if a tile is a wall or not
+      chooseTile: function() {
+        const rdm = generalFct.randomPicker(100);
+        // % of tile are normale floor
+        if (rdm > tilePercentage) {
+          return 'wall';
+        } else {
+          return 'floor';
+        }
+      },
+
+      // choose the position of a object in the map grid
+      chooseCoordObj: function(x, y) {
+        let coordX, coordY, position;
+        do {
+          coordX = generalFct.randomPicker(x);
+          coordY = generalFct.randomPicker(y);
+          position = this.mapArr[coordX][coordY];
+          // test if the chosen tile is a floor (not a wall) and don't have another object yet
+        } while (position.tileType !== 'floor' || 'obj' in position);
+
+        return [coordX, coordY];
+      },
+      // choose the place of an object and place it in the map array
+      placeObj: function(obj, x, y) {
+        const position = this.chooseCoordObj(x, y);
+        obj.position[0] = position[0];
+        obj.position[1] = position[1];
+
+        this.mapArr[obj.position[0]][obj.position[1]].obj = obj.name;
+      },
+
+      // randomly choose style of the floors tiles
+      floorStyling: function() {
+        const rand = generalFct.randomPicker(100);
+        if (rand < 5) {
+          return require('../assets/img/Map/Floors/floor_2.png');
+        } else if (rand >= 5 && rand < 15) {
+          return require('../assets/img/Map/Floors/floor_3.png');
+        } else if (rand >= 15 && rand < 18) {
+          return require('../assets/img/Map/Floors/floor_4.png');
+        } else if (rand >= 18 && rand < 28) {
+          return require('../assets/img/Map/Floors/floor_5.png');
+        } else {
+          return require('../assets/img/Map/Floors/floor_1.png');
+        }
+      },
+
+      // render tiles and objects from the map array
+      renderTile: function() {
+        for (let i = 0; i < this.mapArr.length; i++) {
+          // put a x prop to easily know where we are in game
+          $('#board').append(`<div class="mapRow" x=${i}></div>`);
+          for (let j = 0; j < this.mapArr[i].length; j++) {
+            const loc = this.mapArr[i][j];
+            // put a y prop to easily know where we are in game
+            $('.mapRow:last').append(`<div class=" tile ${loc.tileType}" y=${j}></div>`);
+            if (loc.tileType === 'floor') {
+              $('.floor:last').css('backgroundImage', `url(${this.floorStyling()})`);
+            }
+            // add the object if it exist
+            if ('obj' in loc) {
+              const obj = loc.obj;
+              if (obj === 'player1' || obj === 'player2') {
+                $('.floor:last').append(`<div class="${obj} player"></div>`);
+              } else {
+                $('.floor:last').append(`<div class="${obj} weapons"></div>`);
+                $('.weapons:last').css('backgroundImage', `url(${weapons[obj].img})`);
+              }
             }
           }
         }
-      }
-    }
+      },
 
-    function generateMap(x, y) {
-      // MAP
-      // loop to create the map that's x long et y wide, +2 for the inaccessible border (create a bidimensional array)
-      for (let i = 0; i < x + 2; i++) {
-        map[i] = [];
-        for (let j = 0; j < y + 2; j++) {
-          // create the border
-          if (i === 0) {
-            if (j === 0) {
-              pushTile(i, 'wall sideTopLeft');
-            } else if (j === y + 1) {
-              pushTile(i, 'wall sideTopRight');
-            } else {
-              pushTile(i, 'wall topBotLimit');
-            }
-          } else if (i === x + 1) {
-            if (j === 0) {
-              pushTile(i, 'wall sideBottomLeft');
-            } else if (j === y + 1) {
-              pushTile(i, 'wall sideBottomRight');
-            } else {
-              pushTile(i, 'wall topBotLimit');
-            }
-          } else if (j === 0 || j === y + 1) {
-            pushTile(i, 'wall sideLimit');
+      generateMap: function(x, y) {
+        // MAP
+        // loop to create the map that's x long et y wide, +2 for the inaccessible border (create a bidimensional array)
+        for (let i = 0; i < x + 2; i++) {
+          this.mapArr[i] = [];
+          for (let j = 0; j < y + 2; j++) {
+            // create the border
+            if (i === 0) {
+              if (j === 0) {
+                this.pushTile(i, 'wall sideTopLeft');
+              } else if (j === y + 1) {
+                this.pushTile(i, 'wall sideTopRight');
+              } else {
+                this.pushTile(i, 'wall topBotLimit');
+              }
+            } else if (i === x + 1) {
+              if (j === 0) {
+                this.pushTile(i, 'wall sideBottomLeft');
+              } else if (j === y + 1) {
+                this.pushTile(i, 'wall sideBottomRight');
+              } else {
+                this.pushTile(i, 'wall topBotLimit');
+              }
+            } else if (j === 0 || j === y + 1) {
+              this.pushTile(i, 'wall sideLimit');
 
-            // choose the tile type (wall or floor) if it's not a border
-          } else {
-            map[i].push({ tileType: chooseTile() });
+              // choose the tile type (wall or floor) if it's not a border
+            } else {
+              this.mapArr[i].push({ tileType: this.chooseTile() });
+            }
           }
         }
+        // WEAPONS
+        // create an array of the keys of the weapons obj to loop through
+        const weaponsArray = Object.keys(weapons);
+        weaponsArray.forEach(weapon => {
+          // choose position of weapon and put it in the map array the weapons obj except 'fist'
+          if (weapon !== 'fist') {
+            this.placeObj(weapons[weapon], x, y);
+          }
+        });
+        // PLAYERS
+        // place 'player1'
+        this.placeObj(player1, x, y);
+        // place 'player2' and check if it's not adjacent from 'player1', if true replace it
+        do {
+          this.placeObj(player2, x, y);
+          // delete the obj if the player2 is adjacent to player1
+          if (player2.checkIfAdjacent()) {
+            delete this.mapArr[player2.position[0]][player2.position[1]].obj;
+          }
+        } while (player2.checkIfAdjacent());
+
+        // render the map
+        this.renderTile();
       }
-      // WEAPONS
-      // create an array of the keys of the weapons obj to loop through
-      const weaponsArray = Object.keys(weapons);
-      weaponsArray.forEach((weapon) => {
-        // choose position of weapon and put it in the map array the weapons obj except 'fist'
-        if (weapon !== 'fist') {
-          placeObj(weapons[weapon], x, y);
-        }
-      });
-      // PLAYERS
-      // place 'player1'
-      placeObj(player1, x, y);
-      // place 'player2' and check if it's not adjacent from 'player1', if true replace it
-      do {
-        placeObj(player2, x, y);
-        // delete the obj if the player2 is adjacent to player1
-        if (checkIfAdjacent()) {
-          delete map[player2.position[0]][player2.position[1]].obj;
-        }
-      } while (checkIfAdjacent());
+    };
 
-      // render the map
-      renderTile();
+    //  //////////////////////////////////
+    //                WEAPONS
+    //  //////////////////////////////////
 
-      // put the life of the players in their respective char sheet
-      updateUILife(player1);
-      updateUILife(player2);
-      // put the weapon and damage of the players in their respective char sheet
-      updateUIWeapon(player1);
-      updateUIWeapon(player2);
-    }
+    // WEAPON CLASS
+    class Weapon {
+      constructor(name, damage, img, position) {
+        this.name = name;
+        this.damage = damage;
+        this.img = img;
+        this.position = position;
+      }
 
-    //  /////////////////////////
-    //            GAME
-    //  /////////////////////////
-
-    //  /////////////////////////
-    //         MOVEMENT
-    //  /////////////////////////
-
-    // select vertical move
-    function verticalMove(element, player) {
-      let move = $();
-      // select the column of the player by looking at the 'y' propety
-      const col = parseInt(
+      // place the weapon where the player is
+      addWeapon(player, weapon) {
         $(`.${player.name}`)
           .parent()
-          .attr('y')
-      );
-      // add the tile of the column 'col' to 'move' and return move
-      element.each((_i, el) => {
-        move = move.add($(el).children(`:nth-child(${col + 1})`));
-      });
-
-      return move;
-    }
-    // highlight possible move tile expect if there is wall or player in the way
-    function moveHighlight(element) {
-      element.each((i, el) => {
-        // check if there is a wall if true => break the loop
-        if ($(el).hasClass('wall')) {
-          return false;
-        }
-        // check if the other player is in the way if true => break the loop
-        if (
-          $(el)
-            .children()
-            .hasClass('player2') ||
-          $(el)
-            .children()
-            .hasClass('player1')
-        ) {
-          return false;
-        }
-        //  add class 'movement' for highlight and data for walking sounds
-        $(el)
-          .addClass('movement')
-          .data('walk', i);
-      });
-    }
-
-    function displayMove(player) {
-      const playerTile = $(`.tile:has(.${player.name})`);
-      // vertical moves
-      // move up
-      // select the 3 upper row
-      const topRow = playerTile.parent().prevAll(':lt(3)');
-
-      // select the 3 tile in the player column from the rows passed in argument
-      // reverse the jquery object because the result of .add() return in doc order
-      let movTop = $(
-        verticalMove(topRow, player)
-          .get()
-          .reverse()
-      );
-      // move down
-      // same as move up without the reversing
-      const bottomRow = playerTile.parent().nextAll(':lt(3)');
-      const movBottom = verticalMove(bottomRow, player);
-
-      // horizontal moves
-      // select the next/previous tile in col of the player
-      const movRight = playerTile.nextAll(':lt(3)');
-      const movLeft = playerTile.prevAll(':lt(3)');
-
-      // highlight all the possible movements
-      moveHighlight(movTop);
-      moveHighlight(movBottom);
-      moveHighlight(movRight);
-      moveHighlight(movLeft);
-    }
-    // remove the 'movement' class and the data(for the walking sounds)
-    function removeMoveHighlight() {
-      $('.movement')
-        .off()
-        .removeClass('movement')
-        .removeData('walk');
-    }
-
-    function movePlayer(target, player) {
-      // play sound depending of the number of tile walked
-      playSounds('walk', $(target).data().walk);
-
-      // remove player from his tile
-      $(`.${player.name}`).remove();
-      // move player to the clicked tile
-      $(target).append(`<div class="${player.name} player"></div>`);
-
-      // update the position in the 'player' object
-      updatePosition(player, target);
-
-      // remove the click event and the 'movement' class
-      removeMoveHighlight();
-    }
-
-    //  /////////////////////////
-    //            WEAPONS
-    //  /////////////////////////
-
-    // place the weapon where the player is
-    function addWeapon(player, weapon) {
-      $(`.${player.name}`)
-        .parent()
-        .append(`<div class="${weapon} weapons"></div>`);
-      $(`.${weapon}`).css('backgroundImage', `url(${weapons[weapon].img})`);
-    }
-
-    function moveWeapon(player, weapon) {
-      if (weapon.name !== 'fist') {
-        // remove de div of the weapon
-        $(`.${weapon.name}`).remove();
-        // replace it where the player is
-        addWeapon(player, weapon.name);
-        // update position of the weapon
-        updatePosition(weapon, $(`.${player.name}`).parent()[0]);
+          .append(`<div class="${weapon} weapons"></div>`);
+        $(`.${weapon}`).css('backgroundImage', `url(${weapons[weapon].img})`);
       }
-    }
-
-    // check if the player is on a tile with a weapon
-    function checkWeapons(player) {
-      const posX = player.position[0];
-      const posY = player.position[1];
-      let newWeapon;
-      //  create a array of the values of the 'weapons' object to loop trough
-      const weaponsArray = Object.values(weapons);
-      weaponsArray.forEach((weapon) => {
+      // move the weapon exept if it's 'fist'
+      moveWeapon(player, weapon) {
         if (weapon.name !== 'fist') {
-          if (posX === weapon.position[0] && posY === weapon.position[1]) {
-            newWeapon = weapon;
+          // remove de div of the weapon
+          $(`.${weapon.name}`).remove();
+          // replace it where the player is
+          weapon.addWeapon(player, weapon.name);
+          // update position of the weapon
+          generalFct.updatePosition(weapon, $(`.${player.name}`).parent()[0]);
+        }
+      }
+
+      // check if the player is on a tile with a weapon
+      checkWeapons(player) {
+        const posX = player.position[0];
+        const posY = player.position[1];
+        let newWeapon;
+        //  create a array of the values of the 'weapons' object to loop trough
+        const weaponsArray = Object.values(weapons);
+        weaponsArray.forEach(weapon => {
+          if (weapon.name !== 'fist') {
+            if (posX === weapon.position[0] && posY === weapon.position[1]) {
+              newWeapon = weapon;
+            }
           }
-        }
-      });
-      // if there is a new weapon move it with the player
-      if (newWeapon) {
-        // place the new weapon in front of the player
-        moveWeapon(player, newWeapon);
-        // place the old weapon in the same tile as the player
-        moveWeapon(player, weapons[player.weapon.name]);
+        });
+        // if there is a new weapon move it with the player
+        if (newWeapon) {
+          // place the new weapon in front of the player
+          newWeapon.moveWeapon(player, newWeapon);
+          // place the old weapon in the same tile as the player
+          newWeapon.moveWeapon(player, weapons[player.weapon.name]);
 
-        // add the new weapon to the 'player' object
-        player.weapon.name = newWeapon.name;
-        player.weapon.damage = newWeapon.damage;
-        // update UI
-        updateUIWeapon(player);
-      } else {
-        // if there is no new weapon : move weapon's player with him
-        moveWeapon(player, weapons[player.weapon.name]);
-      }
-    }
+          // add the new weapon to the 'player' object
+          player.weapon = newWeapon;
 
-    //  /////////////////////////
-    //          COMBAT
-    //  /////////////////////////
-
-    // add the turn number and who's turn it is in the combat log
-    function turnLog(player, turn) {
-      $('#menu ul').prepend(`<li class="${player.name}Turn">${player.coolName}'s turn</li>`);
-      $('#menu ul').prepend(`<li class="">Turn : ${turn}</li>`);
-    }
-
-    function attack(attacker, defender) {
-      let damage;
-      // check if the defender defenses himself if true divides by 2 the damage
-      if (defender.defending) {
-        damage = attacker.weapon.damage / 2;
-      } else {
-        damage = attacker.weapon.damage;
-      }
-      // substract the attacker's damage of the defendre's life
-      defender.life = defender.life - damage;
-      // update the life of the defender
-      updateUILife(defender);
-
-      return damage;
-    }
-    // disabled combat button for the time of the message + exit animation
-    function disabledCombatBtn() {
-      $('#attackBtn').prop('disabled', true);
-      $('#defendBtn').prop('disabled', true);
-      setTimeout(() => {
-        $('#attackBtn').prop('disabled', false);
-        $('#defendBtn').prop('disabled', false);
-      }, messageDelay + 200);
-    }
-
-    function attackTurn(attacker, defender, turn) {
-      // attack and save the damage
-      const damage = attack(attacker, defender);
-
-      // attack animation and sounds
-      const attackerWeapon = attacker.weapon.name;
-      // if the weapon is not a fist play a sound
-      if (attackerWeapon !== 'fist') {
-        // if the defender is defending play a random 'blocked' sound otherwise play a random attack sound
-        if (defender.defending) {
-          playSounds('blocked', randomPicker(sounds.weapons.length));
+          // update UI
+          generalFct.updateUIWeapon(player);
         } else {
-          playSounds('weapons', randomPicker(sounds.weapons.length));
+          // if there is no new weapon : move weapon's player with him
+          player.weapon.moveWeapon(player, weapons[player.weapon.name]);
         }
-        // weapon animation
-        $(`.${attackerWeapon}`).addClass('animWeapon');
-      } else {
-        // if the weapon is a fist plays a random 'fist' sound and an animation
-        playSounds('fist', randomPicker(sounds.fist.length));
-        $(`.${attacker.name}`)
-          .siblings('.weapons')
-          .addClass('animFist');
       }
-      // reset the defence of the defender
-      defender.defending = false;
-      // continue after the attack animation
-      setTimeout(() => {
-        // remove the animation class of the weapons
-        $(`.${attackerWeapon}`).removeClass('animWeapon animFist');
-        // put the attack in the combat log
-        $('#menu ul').prepend(
-          `<li class="${attacker.name}Turn">${attacker.coolName} attacks ${defender.coolName} for ${damage} damages</li>`
+    }
+
+    // WEAPONS OBJECT
+
+    // to add weapon : key must be the same as the 'name' value and the name of the '.png'
+    const weapons = {
+      fist: new Weapon('fist', 10, require('../assets/img/Weapons/fist.png'), []),
+
+      sword: new Weapon('sword', 25, require('../assets/img/Weapons/sword.png'), []),
+
+      hammer: new Weapon('hammer', 20, require('../assets/img/Weapons/hammer.png'), []),
+      axe: new Weapon('axe', 20, require('../assets/img/Weapons/axe.png'), []),
+
+      club: new Weapon('club', 15, require('../assets/img/Weapons/club.png'), [])
+    };
+
+    //  //////////////////////////////////
+    //                PLAYERS
+    //  //////////////////////////////////
+
+    // PLAYER CLASS
+
+    class Player {
+      constructor(name, coolName, life, weapon, defending, img, cursorImg, position) {
+        this.name = name;
+        this.coolName = coolName;
+        this.life = life;
+        this.weapon = weapon;
+        this.defending = defending;
+        this.img = img;
+        this.cursorImg = cursorImg;
+        this.position = position;
+      }
+
+      // check if playes are adjacent to each other
+      checkIfAdjacent() {
+        const pos1 = player1.position;
+        const pos2 = player2.position;
+        const isAdjacent =
+          (pos1[0] === pos2[0] + 1 && pos1[1] === pos2[1]) ||
+          (pos1[0] === pos2[0] - 1 && pos1[1] === pos2[1]) ||
+          (pos1[0] === pos2[0] && pos1[1] === pos2[1] + 1) ||
+          (pos1[0] === pos2[0] && pos1[1] === pos2[1] - 1);
+        if (isAdjacent) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+
+      // players movement
+
+      // select vertical move
+      verticalMove(element, player) {
+        let move = $();
+        // select the column of the player by looking at the 'y' propety
+        const col = parseInt(
+          $(`.${player.name}`)
+            .parent()
+            .attr('y')
         );
-        turnLog(attacker, turn);
-        // check if the defender is dead
-        if (checkDead(defender)) {
-          // stop the game
-          win(attacker);
-          return;
-        } else {
-          showTurn('turn', defender);
-        }
-      }, 300);
-    }
-
-    function defend(player, turn) {
-      playSounds('shield', 0);
-      // change the defending status of the player
-      player.defending = true;
-      // put the defence in the combat log
-      $('#menu ul').prepend(`<li class="${player.name}Turn">${player.coolName} chooses to defend himself</li>`);
-      turnLog(player, turn);
-    }
-
-    function Combat(player) {
-      // Announce Combat
-      playSounds('combat', 0);
-      showTurn('combat');
-      // setTimeout of the time the message displays + the time of the exit animation
-      setTimeout(() => {
-        // show who's playng the combat turn
-        showTurn('turn', player);
-        // show fist for the players that have no weapon
-        if (player1.weapon.name === 'fist') {
-          addWeapon(player1, 'fist');
-        }
-        if (player2.weapon.name === 'fist') {
-          addWeapon(player2, 'fist');
-        }
-
-        // select the first player to play
-        let firstPlayer, secondPlayer;
-        if (player === player1) {
-          firstPlayer = player1;
-          secondPlayer = player2;
-        } else {
-          firstPlayer = player2;
-          secondPlayer = player1;
-        }
-        let turns = 1;
-        // make the attack/defend buttons usable
-        $('#menu .btn').removeClass('disabled');
-        // attack btn
-        $('#attackBtn').click(() => {
-          // disable button for the time of the annoucement + exit anim
-          disabledCombatBtn();
-
-          // check if turn is odd, if odd the firstPlayer play else the second one
-          // change the cursor for the next player
-          if (turns % 2 !== 0) {
-            attackTurn(firstPlayer, secondPlayer, turns);
-            changeCursor(secondPlayer);
-          } else {
-            attackTurn(secondPlayer, firstPlayer, turns);
-            changeCursor(firstPlayer);
-          }
-          turns += 1;
+        // add the tile of the column 'col' to 'move' and return move
+        element.each((_i, el) => {
+          move = move.add($(el).children(`:nth-child(${col + 1})`));
         });
-        // defend btn
-        $('#defendBtn').click(() => {
-          // disable button for the time of the annoucement + exit anim
-          disabledCombatBtn();
-          // check if turn is odd, if odd the firstPlayer play else the second one
-          // change the cursor for the next player
-          if (turns % 2 !== 0) {
-            defend(firstPlayer, turns);
-            changeCursor(secondPlayer);
-            showTurn('turn', secondPlayer);
-          } else {
-            defend(secondPlayer, turns);
-            changeCursor(firstPlayer);
-            showTurn('turn', firstPlayer);
+
+        return move;
+      }
+      // highlight possible move tile expect if there is wall or player in the way
+      moveHighlight(element) {
+        element.each((i, el) => {
+          // check if there is a wall if true => break the loop
+          if ($(el).hasClass('wall')) {
+            return false;
           }
-          turns += 1;
+          // check if the other player is in the way if true => break the loop
+          if (
+            $(el)
+              .children()
+              .hasClass('player2') ||
+            $(el)
+              .children()
+              .hasClass('player1')
+          ) {
+            return false;
+          }
+          //  add class 'movement' for highlight and data for walking sounds
+          $(el)
+            .addClass('movement')
+            .data('walk', i);
         });
-      }, messageDelay + 200);
+      }
+
+      displayMove(player) {
+        const playerTile = $(`.tile:has(.${player.name})`);
+        // vertical moves
+        // move up
+        // select the 3 upper row
+        const topRow = playerTile.parent().prevAll(':lt(3)');
+
+        // select the 3 tile in the player column from the rows passed in argument
+        // reverse the jquery object because the result of .add() return in doc order
+        let movTop = $(
+          this.verticalMove(topRow, player)
+            .get()
+            .reverse()
+        );
+        // move down
+        // same as move up without the reversing
+        const bottomRow = playerTile.parent().nextAll(':lt(3)');
+        const movBottom = this.verticalMove(bottomRow, player);
+
+        // horizontal moves
+        // select the next/previous tile in col of the player
+        const movRight = playerTile.nextAll(':lt(3)');
+        const movLeft = playerTile.prevAll(':lt(3)');
+
+        // highlight all the possible movements
+        this.moveHighlight(movTop);
+        this.moveHighlight(movBottom);
+        this.moveHighlight(movRight);
+        this.moveHighlight(movLeft);
+      }
+      // remove the 'movement' class and the data(for the walking sounds)
+      removeMoveHighlight() {
+        $('.movement')
+          .off()
+          .removeClass('movement')
+          .removeData('walk');
+      }
+
+      movePlayer(target, player) {
+        // play sound depending of the number of tile walked
+        sounds.playSounds('walk', $(target).data().walk);
+
+        // remove player from his tile
+        $(`.${player.name}`).remove();
+        // move player to the clicked tile
+        $(target).append(`<div class="${player.name} player"></div>`);
+
+        // update the position in the 'player' object
+        generalFct.updatePosition(player, target);
+
+        // remove the click event and the 'movement' class
+        this.removeMoveHighlight();
+      }
     }
+
+    // PLAYERS OBJECTS
+    const player1 = new Player(
+      'player1',
+      'Knight',
+      100,
+      weapons.fist,
+      false,
+      require('../assets/img/Players/knight_idle-sprit.png'),
+      require('../assets/img/Cursor/cursor_player1.png'),
+      []
+    );
+
+    const player2 = new Player(
+      'player2',
+      'Mage',
+      100,
+      weapons.fist,
+      false,
+      require('../assets/img/Players/mage_idle-sprit.png'),
+      require('../assets/img/Cursor/cursor_player2.png'),
+      []
+    );
+
+    //  //////////////////////////////////
+    //                COMBAT
+    //  //////////////////////////////////
+
+    const combat = {
+      // add the turn number and who's turn it is in the combat log
+      turnLog: function(player, turn) {
+        $('#menu ul').prepend(`<li class="${player.name}Turn">${player.coolName}'s turn</li>`);
+        $('#menu ul').prepend(`<li class="">Turn : ${turn}</li>`);
+      },
+
+      attack: function(attacker, defender) {
+        let damage;
+        // check if the defender defenses himself if true divides by 2 the damage
+        if (defender.defending) {
+          damage = attacker.weapon.damage / 2;
+        } else {
+          damage = attacker.weapon.damage;
+        }
+        // substract the attacker's damage of the defendre's life
+        defender.life = defender.life - damage;
+        // update the life of the defender
+        generalFct.updateUILife(defender);
+
+        return damage;
+      },
+      // disabled combat button for the time of the message + exit animation
+      disabledCombatBtn: function() {
+        $('#attackBtn').prop('disabled', true);
+        $('#defendBtn').prop('disabled', true);
+        setTimeout(() => {
+          $('#attackBtn').prop('disabled', false);
+          $('#defendBtn').prop('disabled', false);
+        }, messageDelay + 200);
+      },
+
+      attackTurn: function(attacker, defender, turn) {
+        // attack and save the damage
+        const damage = this.attack(attacker, defender);
+
+        // attack animation and sounds
+        const attackerWeapon = attacker.weapon.name;
+        // if the weapon is not a fist play a sound
+        if (attackerWeapon !== 'fist') {
+          // if the defender is defending play a random 'blocked' sound otherwise play a random attack sound
+          if (defender.defending) {
+            sounds.playSounds('blocked', generalFct.randomPicker(sounds.weapons.length));
+          } else {
+            sounds.playSounds('weapons', generalFct.randomPicker(sounds.weapons.length));
+          }
+          // weapon animation
+          $(`.${attackerWeapon}`).addClass('animWeapon');
+        } else {
+          // if the weapon is a fist plays a random 'fist' sound and an animation
+          sounds.playSounds('fist', generalFct.randomPicker(sounds.fist.length));
+          $(`.${attacker.name}`)
+            .siblings('.weapons')
+            .addClass('animFist');
+        }
+        // reset the defence of the defender
+        defender.defending = false;
+        // continue after the attack animation
+        setTimeout(() => {
+          // remove the animation class of the weapons
+          $(`.${attackerWeapon}`).removeClass('animWeapon animFist');
+          // put the attack in the combat log
+          $('#menu ul').prepend(
+            `<li class="${attacker.name}Turn">${attacker.coolName} attacks ${defender.coolName} for ${damage} damages</li>`
+          );
+          this.turnLog(attacker, turn);
+          // check if the defender is dead
+          if (generalFct.checkDead(defender)) {
+            // stop the game
+            generalFct.win(attacker);
+            return;
+          } else {
+            generalFct.showTurn('turn', defender);
+          }
+        }, 300);
+      },
+
+      defend: function(player, turn) {
+        sounds.playSounds('shield', 0);
+        // change the defending status of the player
+        player.defending = true;
+        // put the defence in the combat log
+        $('#menu ul').prepend(`<li class="${player.name}Turn">${player.coolName} chooses to defend himself</li>`);
+        this.turnLog(player, turn);
+      },
+
+      combatProgress: function(player) {
+        // Announce Combat
+        sounds.playSounds('combat', 0);
+        generalFct.showTurn('combat');
+        // setTimeout of the time the message displays + the time of the exit animation
+        setTimeout(() => {
+          // show who's playng the combat turn
+          generalFct.showTurn('turn', player);
+          // show fist for the players that have no weapon
+          if (player1.weapon.name === 'fist') {
+            player1.weapon.addWeapon(player1, 'fist');
+          }
+          if (player2.weapon.name === 'fist') {
+            player1.weapon.addWeapon(player2, 'fist');
+          }
+
+          // select the first player to play
+          let firstPlayer, secondPlayer;
+          if (player === player1) {
+            firstPlayer = player1;
+            secondPlayer = player2;
+          } else {
+            firstPlayer = player2;
+            secondPlayer = player1;
+          }
+          let turns = 1;
+          // make the attack/defend buttons usable
+          $('#menu .btn').removeClass('disabled');
+          // attack btn
+          $('#attackBtn').click(() => {
+            // disable button for the time of the annoucement + exit anim
+            this.disabledCombatBtn();
+
+            // check if turn is odd, if odd the firstPlayer play else the second one
+            // change the cursor for the next player
+            if (turns % 2 !== 0) {
+              this.attackTurn(firstPlayer, secondPlayer, turns);
+              generalFct.changeCursor(secondPlayer);
+            } else {
+              this.attackTurn(secondPlayer, firstPlayer, turns);
+              generalFct.changeCursor(firstPlayer);
+            }
+            turns += 1;
+          });
+          // defend btn
+          $('#defendBtn').click(() => {
+            // disable button for the time of the annoucement + exit anim
+            this.disabledCombatBtn();
+            // check if turn is odd, if odd the firstPlayer play else the second one
+            // change the cursor for the next player
+            if (turns % 2 !== 0) {
+              this.defend(firstPlayer, turns);
+              generalFct.changeCursor(secondPlayer);
+              generalFct.showTurn('turn', secondPlayer);
+            } else {
+              this.defend(secondPlayer, turns);
+              generalFct.changeCursor(firstPlayer);
+              generalFct.showTurn('turn', firstPlayer);
+            }
+            turns += 1;
+          });
+        }, messageDelay + 200);
+      }
+    };
 
     //  /////////////////////////
     //          GENERAL
     //  /////////////////////////
 
-    // SOUNDS
+    const generalFct = {
+      // random picker
+      randomPicker: function(number) {
+        return Math.floor(Math.random() * number);
+      },
 
-    function playSounds(type, soundIndex, loop) {
-      // check if musics or effects are on if not don't play them(return)
-      if (type === 'ambients' && !musicOn) {
-        return;
-      } else if (type !== 'ambients' && !effectsOn) {
-        return;
-      }
-      // reset the current time of the sound to 0 and play it
-      sounds[type][soundIndex].currentTime = 0;
-      sounds[type][soundIndex].play();
-      // make the sound loop if needed
-      if (loop) {
-        sounds[type][soundIndex].loop = true;
-      }
-    }
-    function stopSounds(sound) {
-      sound.pause();
-      sound.currentTime = 0;
-    }
-    // random picker
-    function randomPicker(number) {
-      return Math.floor(Math.random() * number);
-    }
-    // UI Update
-    function updateUILife(player) {
-      $(`#${player.name}Life`).text(`${player.life}`);
-    }
-    function updateUIWeapon(player) {
-      $(`#${player.name}Weapon`).text(`${player.weapon.name}`);
-      $(`#${player.name}Damage`).text(`${player.weapon.damage}`);
-    }
-    // check if a player's life is less than 0
-    function checkDead(player) {
-      const life = player.life;
-      if (life <= 0) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-    // Stop the game and tell who's winning
-    function win(winner) {
-      playSounds('victory', 0);
-      // disable the attack/defend buttons and remove the click event
-      $('.btn')
-        .addClass('disabled')
-        .off();
-      // show the game over message
-      $('#board').addClass('overlay').append(`
+      // UI Update
+      updateUILife: function(player) {
+        $(`#${player.name}Life`).text(`${player.life}`);
+      },
+      updateUIWeapon: function(player) {
+        $(`#${player.name}Weapon`).text(`${player.weapon.name}`);
+        $(`#${player.name}Damage`).text(`${player.weapon.damage}`);
+      },
+
+      // check if a player's life is less than 0
+      checkDead: function(player) {
+        const life = player.life;
+        if (life <= 0) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+
+      // Stop the game and show who's winning
+      win: function(winner) {
+        sounds.playSounds('victory', 0);
+        // disable the attack/defend buttons and remove the click event
+        $('.btn')
+          .addClass('disabled')
+          .off();
+        // show the game over message
+        $('#board').addClass('overlay').append(`
         <h1 class="overlayText winner win${winner.name}">${winner.coolName} won !</h1>
         <h2 class="overlayText links returnLink">Return</h2>
         `);
-      $('.overlayText').addClass('animated bounceIn');
-      // return to the menu ( emit a event that's catched by app.vue)
-      $('.returnLink').click(() => {
-        sounds.ambients.forEach((sound) => {
-          stopSounds(sound);
+        $('.overlayText').addClass('animated bounceIn');
+        // return to the menu ( emit a event that's catched by app.vue)
+        $('.returnLink').click(() => {
+          sounds.ambients.forEach(sound => {
+            sounds.stopSounds(sound);
+          });
+          self.$emit('exitGame');
         });
-        self.$emit('exitGame');
-      });
 
-      return;
-    }
+        return;
+      },
 
-    // check if playes are adjacent to each other
-    function checkIfAdjacent() {
-      const pos1 = player1.position;
-      const pos2 = player2.position;
-      const isAdjacent =
-        (pos1[0] === pos2[0] + 1 && pos1[1] === pos2[1]) ||
-        (pos1[0] === pos2[0] - 1 && pos1[1] === pos2[1]) ||
-        (pos1[0] === pos2[0] && pos1[1] === pos2[1] + 1) ||
-        (pos1[0] === pos2[0] && pos1[1] === pos2[1] - 1);
-      if (isAdjacent) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-    // update the position of an object by getting the 'x' and 'y' attributes
-    function updatePosition(obj, target) {
-      const positionX = parseInt(
-        $(target)
-          .parent()
-          .attr('x')
-      );
-      obj.position[0] = positionX;
-      const positionY = parseInt($(target).attr('y'));
-      obj.position[1] = positionY;
-    }
+      // update the position of an object by getting the 'x' and 'y' attributes
+      updatePosition: function(obj, target) {
+        const positionX = parseInt(
+          $(target)
+            .parent()
+            .attr('x')
+        );
+        obj.position[0] = positionX;
+        const positionY = parseInt($(target).attr('y'));
+        obj.position[1] = positionY;
+      },
 
-    // restart a turn with the next player
-    function changeTurn(player) {
-      if (player === player1) {
-        play(player2);
-      } else if (player === player2) {
-        play(player1);
-      }
-    }
+      // restart a turn with the next player
+      changeTurn: function(player) {
+        if (player === player1) {
+          this.play(player2);
+        } else if (player === player2) {
+          this.play(player1);
+        }
+      },
 
-    function changeCursor(player) {
-      $('body').css('cursor', `url(${player.cursorImg}), auto`);
-    }
+      changeCursor: function(player) {
+        $('body').css('cursor', `url(${player.cursorImg}), auto`);
+      },
 
-    function showTurn(type, player) {
       // show who's turn it is
-      $('#board').addClass('overlay');
-      if (type === 'turn') {
-        $('#board').append(`<h1 class="overlayText ${player.name}Announce">${player.coolName}'turn</h1>`);
-      } else if (type === 'combat') {
-        $('#board').append(`<h1 class="overlayText winner">Combat !</h1>`);
+      showTurn: function(type, player) {
+        $('#board').addClass('overlay');
+        if (type === 'turn') {
+          $('#board').append(`<h1 class="overlayText ${player.name}Announce">${player.coolName}'turn</h1>`);
+        } else if (type === 'combat') {
+          $('#board').append(`<h1 class="overlayText winner">Combat !</h1>`);
+        }
+
+        $('.overlayText').addClass('animated bounceIn');
+        setTimeout(() => {
+          // hide the text after 1s
+          $('#board').removeClass('overlay');
+          $('.overlayText').addClass('animated zoomOut');
+        }, messageDelay);
+        setTimeout(() => {
+          // remove the div after the exit animation
+          $('.overlayText').remove();
+        }, messageDelay + 200);
+      },
+
+      play: function(player) {
+        this.showTurn('turn', player);
+        // set a time of the annoucement + exit anim
+        setTimeout(() => {
+          // change the cursor acording to the player that play
+          this.changeCursor(player);
+          // display movement for player
+          player.displayMove(player);
+          //add click event listener on every movement tile
+          $('.movement').click(el => {
+            // move the player where the click happened
+            player.movePlayer(el.target, player);
+            // check if there is a weapon
+            player.weapon.checkWeapons(player);
+
+            // check if player is adjacent and start combat if true else continue with next turn
+            if (player.checkIfAdjacent()) {
+              combat.combatProgress(player);
+            } else {
+              this.changeTurn(player);
+            }
+          });
+        }, messageDelay + 200);
+      },
+
+      btnEventHandlers: function() {
+        //      EXIT BTN EVENT
+        // return to the menu ( emit a event that's catched by app.vue)
+        $('.returnLink').click(() => {
+          // stop the music
+          sounds.ambients.forEach(sound => {
+            sounds.stopSounds(sound);
+          });
+          self.$emit('exitGame');
+        });
+        //     RULES BTN EVENT
+        // display the rules modal on click
+        $('.showModal').click(() => {
+          sounds.playSounds('menu', 0);
+
+          $('.modal').css('display', 'block');
+          // add event to close the modal if cliked outside of it
+          $(window).click(e => {
+            if (e.target == $('.modal')[0]) {
+              sounds.playSounds('menu', 1);
+              $('.modal').css('display', 'none');
+              // remove the click event of the window
+              $(window).off();
+            }
+          });
+        });
+        // close the rule modal if clicked on the X
+        $('.close').click(() => {
+          sounds.playSounds('menu', 1);
+          $('.modal').css('display', 'none');
+          // remove the click event of the window
+          $(window).off();
+        });
       }
+    };
 
-      $('.overlayText').addClass('animated bounceIn');
-      setTimeout(() => {
-        // hide the text after 1s
-        $('#board').removeClass('overlay');
-        $('.overlayText').addClass('animated zoomOut');
-      }, messageDelay);
-      setTimeout(() => {
-        // remove the div after the exit animation
-        $('.overlayText').remove();
-      }, messageDelay + 200);
-    }
+    // ///////////////////////////////////////////////
+    //        START THE GAME ON "WINDOW READY"
+    // ///////////////////////////////////////////////
 
-    function play(player) {
-      showTurn('turn', player);
-      // set a time of the annoucement + exit anim
-      setTimeout(() => {
-        // change the cursor acording to the player that play
-        changeCursor(player);
-        // display movement for player
-        displayMove(player);
-        //add click event listener on every movement tile
-        $('.movement').click((el) => {
-          // move the player where the click happened
-          movePlayer(el.target, player);
-          // check if there is a weapon
-          checkWeapons(player);
-
-          // check if player is adjacent and start combat if true else continue with next turn
-          if (checkIfAdjacent()) {
-            Combat(player);
-          } else {
-            changeTurn(player);
-          }
-        });
-      }, messageDelay + 200);
-    }
-
-    function btnEventHandlers() {
-      //      EXIT BTN EVENT
-      // return to the menu ( emit a event that's catched by app.vue)
-      $('.returnLink').click(() => {
-        // stop the music
-        sounds.ambients.forEach((sound) => {
-          stopSounds(sound);
-        });
-        self.$emit('exitGame');
-      });
-      //     RULES BTN EVENT
-      // display the rules modal on click
-      $('.showModal').click(() => {
-        playSounds('menu', 0);
-
-        $('.modal').css('display', 'block');
-        // add event to close the modal if cliked outside of it
-        $(window).click((e) => {
-          if (e.target == $('.modal')[0]) {
-            playSounds('menu', 1);
-            $('.modal').css('display', 'none');
-            // remove the click event of the window
-            $(window).off();
-          }
-        });
-      });
-      // close the rule modal if clicked on the X
-      $('.close').click(() => {
-        playSounds('menu', 1);
-        $('.modal').css('display', 'none');
-        // remove the click event of the window
-        $(window).off();
-      });
-    }
-
-    // Start when the window is ready
     $(() => {
-      // add event handlers on buttons and manage the rules modal
-      btnEventHandlers();
+      // add event handlers on buttons and manage the 'rules' modal
+      generalFct.btnEventHandlers();
 
       // start ambient music
-      playSounds('ambients', randomPicker(sounds.ambients.length), true);
+      sounds.playSounds('ambients', generalFct.randomPicker(sounds.ambients.length), true);
 
       // Generate the map (x tiles by y tiles)
-      generateMap(mapWidth, mapHeight);
+      map.generateMap(mapWidth, mapHeight);
 
-      // Start with 'player1'
-      play(player1);
+      // put the life of the players in their respective char sheet
+      generalFct.updateUILife(player1);
+      generalFct.updateUILife(player2);
+      // put the player's weapon in their respective char sheet
+      generalFct.updateUIWeapon(player1);
+      generalFct.updateUIWeapon(player2);
+
+      // Start the game with 'player1'
+      generalFct.play(player1);
     });
-  },
+  }
 };
 </script>
 
