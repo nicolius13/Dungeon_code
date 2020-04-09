@@ -64,9 +64,11 @@ window.$ = $;
 export default {
   props: {
     mapX: {
+      type: Number,
       default: 10,
     },
     mapY: {
+      type: Number,
       default: 10,
     },
     musicOn: {
@@ -148,14 +150,24 @@ export default {
         position: [],
         img: require('../assets/img/Weapons/sword.png'),
       },
-      hammer: { name: 'hammer', damage: 20, position: [], img: require('../assets/img/Weapons/hammer.png') },
+      hammer: {
+        name: 'hammer',
+        damage: 20,
+        position: [],
+        img: require('../assets/img/Weapons/hammer.png'),
+      },
       axe: {
         name: 'axe',
         damage: 20,
         position: [],
         img: require('../assets/img/Weapons/axe.png'),
       },
-      club: { name: 'club', damage: 15, position: [], img: require('../assets/img/Weapons/club.png') },
+      club: {
+        name: 'club',
+        damage: 15,
+        position: [],
+        img: require('../assets/img/Weapons/club.png'),
+      },
     };
 
     // PLAYERS
@@ -657,15 +669,14 @@ export default {
       sound.pause();
       sound.currentTime = 0;
     }
-
+    // random picker
     function randomPicker(number) {
       return Math.floor(Math.random() * number);
     }
-
+    // UI Update
     function updateUILife(player) {
       $(`#${player.name}Life`).text(`${player.life}`);
     }
-
     function updateUIWeapon(player) {
       $(`#${player.name}Weapon`).text(`${player.weapon.name}`);
       $(`#${player.name}Damage`).text(`${player.weapon.damage}`);
@@ -679,6 +690,7 @@ export default {
         return false;
       }
     }
+    // Stop the game and tell who's winning
     function win(winner) {
       playSounds('victory', 0);
       // disable the attack/defend buttons and remove the click event
@@ -729,8 +741,8 @@ export default {
       obj.position[1] = positionY;
     }
 
+    // restart a turn with the next player
     function changeTurn(player) {
-      // restart a turn with the next player
       if (player === player1) {
         play(player2);
       } else if (player === player2) {
@@ -788,8 +800,7 @@ export default {
       }, messageDelay + 200);
     }
 
-    // Start when the window is ready
-    $(() => {
+    function btnEventHandlers() {
       //      EXIT BTN EVENT
       // return to the menu ( emit a event that's catched by app.vue)
       $('.returnLink').click(() => {
@@ -822,6 +833,12 @@ export default {
         // remove the click event of the window
         $(window).off();
       });
+    }
+
+    // Start when the window is ready
+    $(() => {
+      // add event handlers on buttons and manage the rules modal
+      btnEventHandlers();
 
       // start ambient music
       playSounds('ambients', randomPicker(sounds.ambients.length), true);
