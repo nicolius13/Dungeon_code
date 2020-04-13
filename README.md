@@ -1,19 +1,6 @@
-# dungeon
+# Dungeon
 
-## Project setup
+Project 6 created for the Front-End developer path of OpenClassroom:
+Build a turn-based board game in JavaScript.
 
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-
-```
-npm run build
-```
+The game is playable at : https://nicolius13.github.io/Dungeon_code
