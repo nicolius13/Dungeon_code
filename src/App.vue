@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <!-- MAIN MENU -->
     <div class="mainMenu" v-if="menu">
       <Title />
       <div class="menuSelect">
@@ -7,6 +8,7 @@
         <h2 class="mainLinks" @click="toggleOptions">Options</h2>
       </div>
     </div>
+    <!-- OPTION MENU -->
     <div id="options" class="mainMenu" v-if="options">
       <Title />
       <div class="menuSelect">
@@ -34,6 +36,7 @@
         <h2 class="mainLinks" @click="toggleOptions">Return</h2>
       </div>
     </div>
+    <!-- GAME -->
     <Game v-if="start" :musicOn="musicOn" :effectsOn="effectsOn" :mapX="mapX" :mapY="mapY" @exitGame="toggleGame" />
   </div>
 </template>
@@ -50,7 +53,7 @@ export default {
     Game,
     NumberSpinner,
     Title,
-    CheckBoxe,
+    CheckBoxe
   },
   data() {
     return {
@@ -62,19 +65,19 @@ export default {
       sounds: {
         select: {
           isPlaying: false,
-          file: new Audio(require('./assets/Sounds/menu/select.wav')),
+          file: new Audio(require('./assets/Sounds/menu/select.wav'))
         },
         button: {
           isPlaying: false,
-          file: new Audio(require('./assets/Sounds/menu/button.wav')),
+          file: new Audio(require('./assets/Sounds/menu/button.wav'))
         },
         menuMusic: {
           isPlaying: false,
-          file: new Audio(require('./assets/Sounds/ambient/menu.mp3')),
-        },
+          file: new Audio(require('./assets/Sounds/ambient/menu.mp3'))
+        }
       },
       musicOn: true,
-      effectsOn: true,
+      effectsOn: true
     };
   },
   methods: {
@@ -117,12 +120,12 @@ export default {
       sound.file.pause();
       sound.file.currentTime = 0;
       sound.isPlaying = false;
-    },
+    }
   },
   // start the music as soon as the app is mounted
   mounted() {
     this.playSound(this.sounds.menuMusic, 'music', true);
-  },
+  }
 };
 </script>
 
