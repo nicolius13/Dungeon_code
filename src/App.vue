@@ -53,7 +53,7 @@ export default {
     Game,
     NumberSpinner,
     Title,
-    CheckBoxe
+    CheckBoxe,
   },
   data() {
     return {
@@ -65,19 +65,19 @@ export default {
       sounds: {
         select: {
           isPlaying: false,
-          file: new Audio(require('./assets/Sounds/menu/select.wav'))
+          file: new Audio(require('./assets/Sounds/menu/select.wav')),
         },
         button: {
           isPlaying: false,
-          file: new Audio(require('./assets/Sounds/menu/button.wav'))
+          file: new Audio(require('./assets/Sounds/menu/button.wav')),
         },
         menuMusic: {
           isPlaying: false,
-          file: new Audio(require('./assets/Sounds/ambient/menu.mp3'))
-        }
+          file: new Audio(require('./assets/Sounds/ambient/menu.mp3')),
+        },
       },
       musicOn: true,
-      effectsOn: true
+      effectsOn: true,
     };
   },
   methods: {
@@ -120,12 +120,12 @@ export default {
       sound.file.pause();
       sound.file.currentTime = 0;
       sound.isPlaying = false;
-    }
+    },
   },
   // start the music as soon as the app is mounted
   mounted() {
     this.playSound(this.sounds.menuMusic, 'music', true);
-  }
+  },
 };
 </script>
 

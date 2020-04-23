@@ -65,18 +65,18 @@ export default {
   props: {
     mapX: {
       type: Number,
-      default: 10
+      default: 10,
     },
     mapY: {
       type: Number,
-      default: 10
+      default: 10,
     },
     musicOn: {
-      type: Boolean
+      type: Boolean,
     },
     effectsOn: {
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
   mounted: function() {
     //  //////////////////////////////////
@@ -103,36 +103,36 @@ export default {
         new Audio(require('../assets/Sounds/fist/fist1_sound.mp3')),
         new Audio(require('../assets/Sounds/fist/fist2_sound.mp3')),
         new Audio(require('../assets/Sounds/fist/fist3_sound.mp3')),
-        new Audio(require('../assets/Sounds/fist/fist4_sound.mp3'))
+        new Audio(require('../assets/Sounds/fist/fist4_sound.mp3')),
       ],
       weapons: [
         new Audio(require('../assets/Sounds/weapons/weapon1_sound.flac')),
         new Audio(require('../assets/Sounds/weapons/weapon2_sound.flac')),
         new Audio(require('../assets/Sounds/weapons/weapon3_sound.flac')),
-        new Audio(require('../assets/Sounds/weapons/weapon4_sound.flac'))
+        new Audio(require('../assets/Sounds/weapons/weapon4_sound.flac')),
       ],
       blocked: [
         new Audio(require('../assets/Sounds/weapons/block_blade1.wav')),
         new Audio(require('../assets/Sounds/weapons/block_blade2.wav')),
         new Audio(require('../assets/Sounds/weapons/block_blunt1.wav')),
-        new Audio(require('../assets/Sounds/weapons/block_blunt2.wav'))
+        new Audio(require('../assets/Sounds/weapons/block_blunt2.wav')),
       ],
       shield: [new Audio(require('../assets/Sounds/defend/shield.wav'))],
       walk: [
         new Audio(require('../assets/Sounds/walk/1steps.mp3')),
         new Audio(require('../assets/Sounds/walk/2steps.mp3')),
-        new Audio(require('../assets/Sounds/walk/3steps.mp3'))
+        new Audio(require('../assets/Sounds/walk/3steps.mp3')),
       ],
       menu: [
         new Audio(require('../assets/Sounds/menu/select.wav')),
-        new Audio(require('../assets/Sounds/menu/button.wav'))
+        new Audio(require('../assets/Sounds/menu/button.wav')),
       ],
       victory: [new Audio(require('../assets/Sounds/victory.mp3'))],
       combat: [new Audio(require('../assets/Sounds/fight.mp3'))],
       ambients: [
         new Audio(require('../assets/Sounds/ambient/ambient1.mp3')),
         new Audio(require('../assets/Sounds/ambient/ambient2.mp3')),
-        new Audio(require('../assets/Sounds/ambient/ambient3.mp3'))
+        new Audio(require('../assets/Sounds/ambient/ambient3.mp3')),
       ],
       playSounds: function(type, soundIndex, loop) {
         // check if musics or effects are on if not don't play them(return)
@@ -152,7 +152,7 @@ export default {
       stopSounds: function(sound) {
         sound.pause();
         sound.currentTime = 0;
-      }
+      },
     };
 
     //  //////////////////////////////////
@@ -294,7 +294,7 @@ export default {
 
         // render the map
         this.renderTile();
-      }
+      },
     };
 
     //  //////////////////////////////////
@@ -373,7 +373,7 @@ export default {
       hammer: new Weapon('hammer', 20, require('../assets/img/Weapons/hammer.png'), []),
       axe: new Weapon('axe', 20, require('../assets/img/Weapons/axe.png'), []),
 
-      club: new Weapon('club', 15, require('../assets/img/Weapons/club.png'), [])
+      club: new Weapon('club', 15, require('../assets/img/Weapons/club.png'), []),
     };
 
     //  //////////////////////////////////
@@ -567,6 +567,16 @@ export default {
         }, messageDelay + 200);
       },
 
+      // check if a player's life is less than 0
+      checkDead: function(player) {
+        const life = player.life;
+        if (life <= 0) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+
       attackTurn: function(attacker, defender, turn) {
         // attack and save the damage
         const damage = this.attack(attacker, defender);
@@ -602,7 +612,7 @@ export default {
           );
           this.turnLog(attacker, turn);
           // check if the defender is dead
-          if (generalFct.checkDead(defender)) {
+          if (this.checkDead(defender)) {
             // stop the game
             generalFct.win(attacker);
             return;
@@ -683,7 +693,7 @@ export default {
             turns += 1;
           });
         }, messageDelay + 200);
-      }
+      },
     };
 
     //  /////////////////////////
@@ -703,16 +713,6 @@ export default {
       updateUIWeapon: function(player) {
         $(`#${player.name}Weapon`).text(`${player.weapon.name}`);
         $(`#${player.name}Damage`).text(`${player.weapon.damage}`);
-      },
-
-      // check if a player's life is less than 0
-      checkDead: function(player) {
-        const life = player.life;
-        if (life <= 0) {
-          return true;
-        } else {
-          return false;
-        }
       },
 
       // Stop the game and show who's winning
@@ -843,7 +843,7 @@ export default {
           // remove the click event of the window
           $(window).off();
         });
-      }
+      },
     };
 
     // ///////////////////////////////////////////////
@@ -870,7 +870,7 @@ export default {
       // Start the game with 'player1'
       generalFct.play(player1);
     });
-  }
+  },
 };
 </script>
 
