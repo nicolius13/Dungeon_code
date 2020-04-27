@@ -78,7 +78,7 @@ export default {
       type: Boolean,
     },
   },
-  mounted: function() {
+  mounted() {
     //  //////////////////////////////////
     //             VARIABLES
     //  /////////////////////////////////
@@ -134,7 +134,7 @@ export default {
         new Audio(require('../assets/Sounds/ambient/ambient2.mp3')),
         new Audio(require('../assets/Sounds/ambient/ambient3.mp3')),
       ],
-      playSounds: function(type, soundIndex, loop) {
+      playSounds(type, soundIndex, loop) {
         // check if musics or effects are on if not don't play them(return)
         if (type === 'ambients' && !musicOn) {
           return;
@@ -149,7 +149,7 @@ export default {
           sounds[type][soundIndex].loop = true;
         }
       },
-      stopSounds: function(sound) {
+      stopSounds(sound) {
         sound.pause();
         sound.currentTime = 0;
       },
@@ -162,11 +162,11 @@ export default {
     const map = {
       mapArr: [],
 
-      pushTile: function(index, className) {
+      pushTile(index, className) {
         this.mapArr[index].push({ tileType: className });
       },
       // chose if a tile is a wall or not
-      chooseTile: function() {
+      chooseTile() {
         const rdm = generalFct.randomPicker(100);
         // % of tile are normale floor
         if (rdm > tilePercentage) {
@@ -177,7 +177,7 @@ export default {
       },
 
       // choose the position of a object in the map grid
-      chooseCoordObj: function(x, y) {
+      chooseCoordObj(x, y) {
         let coordX, coordY, position;
         do {
           coordX = generalFct.randomPicker(x);
@@ -189,7 +189,7 @@ export default {
         return [coordX, coordY];
       },
       // choose the place of an object and place it in the map array
-      placeObj: function(obj, x, y) {
+      placeObj(obj, x, y) {
         const position = this.chooseCoordObj(x, y);
         obj.position[0] = position[0];
         obj.position[1] = position[1];
@@ -198,7 +198,7 @@ export default {
       },
 
       // randomly choose style of the floors tiles
-      floorStyling: function() {
+      floorStyling() {
         const rand = generalFct.randomPicker(100);
         if (rand < 5) {
           return require('../assets/img/Map/Floors/floor_2.png');
@@ -214,7 +214,7 @@ export default {
       },
 
       // render tiles and objects from the map array
-      renderTile: function() {
+      renderTile() {
         for (let i = 0; i < this.mapArr.length; i++) {
           // put a x prop to easily know where we are in game
           $('#board').append(`<div class="mapRow" x=${i}></div>`);
@@ -239,7 +239,7 @@ export default {
         }
       },
 
-      generateMap: function(x, y) {
+      generateMap(x, y) {
         // MAP
         // loop to create the map that's x long et y wide, +2 for the inaccessible border (create a bidimensional array)
         for (let i = 0; i < x + 2; i++) {
@@ -351,7 +351,7 @@ export default {
           newWeapon.moveWeapon(player, weapons[player.weapon.name]);
 
           // add the new weapon to the 'player' object
-          player.weapon = newWeapon;
+          player.setWeapon(newWeapon);
 
           // update UI
           generalFct.updateUIWeapon(player);
@@ -506,6 +506,15 @@ export default {
         // remove the click event and the 'movement' class
         this.removeMoveHighlight();
       }
+
+      // add the new weapon to the 'player' object
+      setWeapon(weapon) {
+        this.weapon = weapon;
+      }
+      // change the defending status of the player
+      setDefence(def) {
+        this.defending = def;
+      }
     }
 
     // PLAYERS OBJECTS
@@ -537,12 +546,12 @@ export default {
 
     const combat = {
       // add the turn number and who's turn it is in the combat log
-      turnLog: function(player, turn) {
+      turnLog(player, turn) {
         $('#menu ul').prepend(`<li class="${player.name}Turn">${player.coolName}'s turn</li>`);
         $('#menu ul').prepend(`<li class="">Turn : ${turn}</li>`);
       },
 
-      attack: function(attacker, defender) {
+      attack(attacker, defender) {
         let damage;
         // check if the defender defenses himself if true divides by 2 the damage
         if (defender.defending) {
@@ -558,7 +567,7 @@ export default {
         return damage;
       },
       // disabled combat button for the time of the message + exit animation
-      disabledCombatBtn: function() {
+      disabledCombatBtn() {
         $('#attackBtn').prop('disabled', true);
         $('#defendBtn').prop('disabled', true);
         setTimeout(() => {
@@ -568,7 +577,7 @@ export default {
       },
 
       // check if a player's life is less than 0
-      checkDead: function(player) {
+      checkDead(player) {
         const life = player.life;
         if (life <= 0) {
           return true;
@@ -577,7 +586,7 @@ export default {
         }
       },
 
-      attackTurn: function(attacker, defender, turn) {
+      attackTurn(attacker, defender, turn) {
         // attack and save the damage
         const damage = this.attack(attacker, defender);
 
@@ -601,7 +610,7 @@ export default {
             .addClass('animFist');
         }
         // reset the defence of the defender
-        defender.defending = false;
+        defender.setDefence(false);
         // continue after the attack animation
         setTimeout(() => {
           // remove the animation class of the weapons
@@ -622,16 +631,16 @@ export default {
         }, 300);
       },
 
-      defend: function(player, turn) {
+      defend(player, turn) {
         sounds.playSounds('shield', 0);
         // change the defending status of the player
-        player.defending = true;
+        player.setDefence(true);
         // put the defence in the combat log
         $('#menu ul').prepend(`<li class="${player.name}Turn">${player.coolName} chooses to defend himself</li>`);
         this.turnLog(player, turn);
       },
 
-      combatProgress: function(player) {
+      combatProgress(player) {
         // Announce Combat
         sounds.playSounds('combat', 0);
         generalFct.showTurn('combat');
@@ -702,21 +711,21 @@ export default {
 
     const generalFct = {
       // random picker
-      randomPicker: function(number) {
+      randomPicker(number) {
         return Math.floor(Math.random() * number);
       },
 
       // UI Update
-      updateUILife: function(player) {
+      updateUILife(player) {
         $(`#${player.name}Life`).text(`${player.life}`);
       },
-      updateUIWeapon: function(player) {
+      updateUIWeapon(player) {
         $(`#${player.name}Weapon`).text(`${player.weapon.name}`);
         $(`#${player.name}Damage`).text(`${player.weapon.damage}`);
       },
 
       // Stop the game and show who's winning
-      win: function(winner) {
+      win(winner) {
         sounds.playSounds('victory', 0);
         // disable the attack/defend buttons and remove the click event
         $('.btn')
@@ -740,7 +749,7 @@ export default {
       },
 
       // update the position of an object by getting the 'x' and 'y' attributes
-      updatePosition: function(obj, target) {
+      updatePosition(obj, target) {
         const positionX = parseInt(
           $(target)
             .parent()
@@ -752,7 +761,7 @@ export default {
       },
 
       // restart a turn with the next player
-      changeTurn: function(player) {
+      changeTurn(player) {
         if (player === player1) {
           this.play(player2);
         } else if (player === player2) {
@@ -760,12 +769,12 @@ export default {
         }
       },
 
-      changeCursor: function(player) {
+      changeCursor(player) {
         $('body').css('cursor', `url(${player.cursorImg}), auto`);
       },
 
       // show who's turn it is
-      showTurn: function(type, player) {
+      showTurn(type, player) {
         $('#board').addClass('overlay');
         if (type === 'turn') {
           $('#board').append(`<h1 class="overlayText ${player.name}Announce">${player.coolName}'turn</h1>`);
@@ -785,7 +794,7 @@ export default {
         }, messageDelay + 200);
       },
 
-      play: function(player) {
+      play(player) {
         this.showTurn('turn', player);
         // set a time of the annoucement + exit anim
         setTimeout(() => {
@@ -810,7 +819,7 @@ export default {
         }, messageDelay + 200);
       },
 
-      btnEventHandlers: function() {
+      btnEventHandlers() {
         //      EXIT BTN EVENT
         // return to the menu ( emit a event that's catched by app.vue)
         $('.returnLink').click(() => {
